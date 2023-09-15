@@ -1,0 +1,26 @@
+@startuml
+  skinparam classAttributeIconSize 0
+Class Expense {
+  - name : String // 15 characters
+  - monthStarted : String // yyyy-mm format
+  - monthlyCharge : float // CAD
+  - comment : String // 20 characters and optional
+
+  +setName(name : String) : void
+}
+
+Class List {
+  -expenses : ArrayList<Expense>
+  +addExpense(expense : Expense) : void
+  +editExpense(index : int, newValues : Expense) : void
+  +viewExpense(index : int) : void
+  +deleteExpense(index : int) : void
+}
+
+note right of List
+  This is the class representing the data structure that holds all the expenses
+  listing.
+end note
+
+List *-- "0..*" Expense
+@enduml

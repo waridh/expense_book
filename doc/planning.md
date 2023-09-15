@@ -9,8 +9,18 @@ This document contains the outline of how I want the interactions to work on thi
   - Edit previous expense
   - Delete expense
 - Display the expenses
+  - Minimally, need to display the following fields:
+    - name
+    - date
+    - monthly charge
+- User aid
+  - Enforce the type of the input in each of the field
 
 The data that is stored also have to be in a certain format, so we should be doing a check on the correctness of the user input.
+
+## UML Diagram
+
+![The UML Diagram](uml/assign1UML/assign1UML.png)
 
 ## TODO
 
@@ -22,7 +32,7 @@ The data that is stored also have to be in a certain format, so we should be doi
 
 ### Can you make a database on android studio
 
-Local data is sufficient for our use, I believe.
+The constraint of the assignment says that we do not have to make the data persistent between runs.
 
 #### Options
 
@@ -32,4 +42,4 @@ Local data is sufficient for our use, I believe.
 - external storage
   - Not going to be available.
 
-Should research internal storage solution then
+The research does not need to continue because this is not a required feature.
