@@ -1,0 +1,39 @@
+@startuml
+  skinparam classAttributeIconSize 0
+class CustomAdapter{
+  - thing : thing
+}
+
+class MainActivity {
+  Thing
+}
+Class Expense {
+  - name : String // 15 characters
+  - monthStarted : String // yyyy-mm format
+  - monthlyCharge : float // CAD
+  - comment : String // 20 characters and optional
+
+  +setName(name : String) : void
+}
+
+Class List {
+  -expenses : ArrayList<Expense>
+  +addExpense(expense : Expense) : void
+  +editExpense(index : int, newValues : Expense) : void
+  +viewExpense(index : int) : void
+  +deleteExpense(index : int) : void
+}
+
+note top of List
+  This is the class representing the data structure that holds all the expenses
+  listing.
+end note
+
+note top of MainActivity
+  This is the MainActivity class in Android studio. This is effectively the
+  entrance program. This means that when you launch up the application, this
+  is the first class that the program effectively enters.
+end note
+
+List *-- "0..*" Expense
+@enduml
