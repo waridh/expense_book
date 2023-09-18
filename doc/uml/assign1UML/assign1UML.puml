@@ -1,7 +1,8 @@
 @startuml
   skinparam classAttributeIconSize 0
 class CustomAdapter{
-  - thing : thing
+  - entries : ArrayList<Expense>
+  + getView(position : int, convertView : View, parent : ViewGroup)
 }
 
 class MainActivity {
@@ -14,6 +15,7 @@ Class Expense {
   - comment : String // 20 characters and optional
 
   +setName(name : String) : void
+  +summaryToString() : String
 }
 
 Class List {
