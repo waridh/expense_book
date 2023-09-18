@@ -11,11 +11,29 @@ class MainActivity {
 Class Expense {
   - name : String // 15 characters
   - monthStarted : String // yyyy-mm format
-  - monthlyCharge : float // CAD
+  - monthlyCharge : CanadianDollar // CAD
   - comment : String // 20 characters and optional
 
   +setName(name : String) : void
   +summaryToString() : String
+  +getName() : String
+  +getComment() : String
+  +getDate() : String
+}
+
+class CanadianDollar {
+  -value : String
+  +getValue() : String
+}
+
+class Comment {
+  -content : String
+  +getComment() : String
+}
+
+class DateExpBook {
+  -date : String
+  +getDate() : String
 }
 
 Class List {
@@ -38,4 +56,12 @@ note top of MainActivity
 end note
 
 List *-- "0..*" Expense
+Expense *-- "1" CanadianDollar
+Expense o-- "0..1" Comment
+Expense *-- "1" DateExpBook
+
+note bottom of DateExpBook
+  Date has been abstracted into its own class so that it can handle its own
+  format checking. Returns the string when getDate() is called.
+end note
 @enduml
