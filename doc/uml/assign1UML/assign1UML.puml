@@ -8,7 +8,8 @@ class CustomAdapter{
 class MainActivity {
   Thing
 }
-Class Expense {
+
+class Expense {
   - name : String // 15 characters
   - monthStarted : String // yyyy-mm format
   - monthlyCharge : CanadianDollar // CAD
@@ -36,7 +37,7 @@ class DateExpBook {
   +getDate() : String
 }
 
-Class List {
+class List {
   -expenses : ArrayList<Expense>
   +addExpense(expense : Expense) : void
   +editExpense(index : int, newValues : Expense) : void

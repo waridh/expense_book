@@ -27,6 +27,7 @@ The data that is stored also have to be in a certain format, so we should be doi
 | Task | Description |
 | --- | --- |
 | Make the main activity | For now, try to make the list view for the application |
+| Making the user input activity | Need to get the activity made |
 
 ## Research
 
