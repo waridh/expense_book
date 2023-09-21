@@ -17,8 +17,17 @@ public class NewEntryActivity extends AppCompatActivity {
         /**
          * The android onCreate.
          */
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState); // The super constructor
         setContentView(R.layout.activity_new_entry);
     }
+
+    public void returnToMain() {
+        /**
+         * This method should be sending the user back to the main page.
+         */
+        finish();   // This is all it takes to remove the activity from the stack. No persistence.
+    }
+
+
 
 }

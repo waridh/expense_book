@@ -35,6 +35,9 @@ The data that is stored also have to be in a certain format, so we should be doi
 
 The constraint of the assignment says that we do not have to make the data persistent between runs.
 
+### How to select a list
+[A link that probably works](https://www.homeandlearn.co.uk/android/android_simple_list_items.html)
+
 #### Options
 
 - sqlite
