@@ -40,11 +40,29 @@ public class Expense {
         return monthlyCharge.getValue();
     }
 
+    /**
+     * This method returns the comment that is stored in this expense entry. If it doesn't exist
+     * then the method will return null.
+     * @return Either the stored comment, or null.
+     */
     public Comment getComment() {
-        return comment;
+        if (this.commentFlag) return comment;
+        else return null;   // Going to get rid of this null soon.
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public void setComment(String s) {
+        this.commentFlag = true;    // The comment flag is not true since we are getting new comment
+    }
+
+    /**
+     * This method will delete the comment that is attached to the expense.
+     */
+    public void deleteComment() {
+        this.commentFlag = false;
+        this.comment = null;
     }
 }

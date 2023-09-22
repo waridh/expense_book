@@ -11,12 +11,12 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
     Context context;
-    ArrayList<Expense> entries;
+    ExpenseList expenses;
 
     LayoutInflater inflater;
-    public CustomAdapter(Context applicationContext, ArrayList<Expense> entries) {
+    public CustomAdapter(Context applicationContext, ExpenseList entries) {
         this.context = applicationContext;
-        this.entries = entries;
+        this.expenses = entries;
         this.inflater = (LayoutInflater.from(applicationContext));
     }
 
@@ -27,7 +27,7 @@ public class CustomAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return entries.size();
+        return expenses.size();
     }
 
     /**
@@ -39,7 +39,7 @@ public class CustomAdapter extends BaseAdapter {
      */
     @Override
     public Object getItem(int position) {
-        return entries.get(position);
+        return expenses.get(position);
     }
 
     /**
@@ -74,22 +74,15 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.activity_listview, null);
-        TextView testLister = (TextView)           view.findViewById(R.id.label);
-        TextView test2 = (TextView)           view.findViewById(R.id.rowName);
-        TextView test3 = (TextView)           view.findViewById(R.id.cost);
-//        TextView numList = (TextView) view.findViewById(R.id.number);
-        testLister.setText((this.entries.get(position)).getMonthStarted());
-//        testLister.setText("tester");
-        test2.setText(this.entries.get(position).getName());
-        test3.setText(this.entries.get(position).getMonthlyCharge());
-//        numList.setText(String.valueOf(flags[position]));
+        TextView monthStartedText = (TextView)      view.findViewById(R.id.label);
+        TextView expenseName = (TextView)           view.findViewById(R.id.rowName);
+        TextView monthlyCost = (TextView)           view.findViewById(R.id.cost);
 
-//        convertView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(final View v) {
-//                /* I am not sure what I am doing with this one*/
-//            }
-//        });
+        /* Setting the text of the list based on its position */
+        monthStartedText.setText(this.expenses.getMonthStarted(position));
+        expenseName.setText(this.expenses.getName(position));
+        monthlyCost.setText(this.expenses.getName(position));
+
         return view;
     }
 }

@@ -13,22 +13,17 @@ public class MainActivity extends AppCompatActivity {
 
     /* Array of String for now */
 
-    private ArrayList<Expense> entries;
+    private ExpenseList entries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.entries = new ArrayList<Expense>();
+        this.entries = new ExpenseList();
         this.entries.add(new Expense("Bach", "2000-05", "100.00"));
         this.entries.add(new Expense("Brahm", "2000-05", "100.00"));
         this.entries.add(new Expense("Katrina", "2000-05", "1000.00"));
-        /* This next trick is making many entries */
-        for (int i=0; i < 100; i++) {
-            /* Inside the for loop */
-            this.entries.add(new Expense(String.valueOf(i), "2023-09", "15.00"));
-        }
 
         CustomAdapter adapter = new CustomAdapter(
                 this, this.entries);
