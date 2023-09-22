@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
     /* Array of String for now */
@@ -23,9 +21,9 @@ public class MainActivity extends AppCompatActivity {
         this.entries = new ExpenseList();
         this.entries.add(new Expense("Bach", "2000-05", "100.00"));
         this.entries.add(new Expense("Brahm", "2000-05", "100.00"));
-        this.entries.add(new Expense("Katrina", "2000-05", "1000.00"));
+        this.entries.add(new Expense("Watrina", "2000-05", "1000.00"));
 
-        CustomAdapter adapter = new CustomAdapter(
+        ExpenseListAdapter adapter = new ExpenseListAdapter(
                 this, this.entries);
         ListView listView = (ListView) findViewById(R.id.expense_list);
         listView.setAdapter(adapter);

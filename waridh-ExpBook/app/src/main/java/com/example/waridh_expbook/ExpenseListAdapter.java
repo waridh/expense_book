@@ -7,14 +7,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
-public class CustomAdapter extends BaseAdapter {
+public class ExpenseListAdapter extends BaseAdapter {
     Context context;
-    ExpenseList expenses;
-
+    ExpenseList expenses;   // Points to the same expense list on the heap as the activity.
     LayoutInflater inflater;
-    public CustomAdapter(Context applicationContext, ExpenseList entries) {
+    public ExpenseListAdapter(Context applicationContext, ExpenseList entries) {
         this.context = applicationContext;
         this.expenses = entries;
         this.inflater = (LayoutInflater.from(applicationContext));
