@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.waridh_expbook.NewEntryActivity" />
+        <activity android:name="com.example.waridh_expbook.DetailedExpenseActivity" />
     </application>
 
 </manifest>

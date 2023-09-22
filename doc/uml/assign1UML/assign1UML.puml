@@ -1,12 +1,31 @@
 @startuml
   skinparam classAttributeIconSize 0
-class CustomAdapter{
-  - entries : ArrayList<Expense>
+
+class AppCompatActivity {
+
+}
+class ExpenseListAdapter{
+  - entries : ExpenseList
   + getView(position : int, convertView : View, parent : ViewGroup)
 }
 
 class MainActivity {
-  Thing
+  - entries : ExpenseList
+  - expenseListView : ListView
+  - expenseAdapter : ExpenseListAdapter
+  + super()
+  + openNewEntry(view : View) : void
+}
+
+class DetailedExpenseActivity {
+  - entries : ExpenseList
+  + super()
+}
+
+class NewEntryActivity {
+  - entries : ExpenseList
+  + super()
+  + returnToMain() : void
 }
 
 class Expense {
@@ -20,6 +39,7 @@ class Expense {
   +getName() : String
   +getComment() : String
   +getDate() : String
+  +equals(other : Expense) : boolean
 }
 
 class CanadianDollar {
@@ -37,26 +57,41 @@ class DateExpBook {
   +getDate() : String
 }
 
-class List {
+class ExpenseList {
   -expenses : ArrayList<Expense>
   +addExpense(expense : Expense) : void
   +editExpense(index : int, newValues : Expense) : void
   +viewExpense(index : int) : void
   +deleteExpense(index : int) : void
+  +get(index : int) : Expense
 }
 
-note top of List
+note left of ExpenseList
   This is the class representing the data structure that holds all the expenses
   listing.
 end note
 
-note top of MainActivity
+note left of MainActivity
   This is the MainActivity class in Android studio. This is effectively the
   entrance program. This means that when you launch up the application, this
   is the first class that the program effectively enters.
 end note
 
-List *-- "0..*" Expense
+/' This is the classes that inherit from AppCompatActivity, which is all the
+activities '/
+AppCompatActivity <|-- MainActivity
+AppCompatActivity <|-- DetailedExpenseActivity
+AppCompatActivity <|-- NewEntryActivity
+
+/' This is the relationship for the MainActivity '/
+MainActivity *-- "1" ExpenseList
+MainActivity *-- "1" ExpenseListAdapter
+
+/' For relationships between the activities '/
+MainActivity -- NewEntryActivity : "Create new expense entry"
+MainActivity -- DetailedExpenseActivity : "Shows detail of an expense entry"
+
+ExpenseList *-- "0..*" Expense
 Expense *-- "1" CanadianDollar
 Expense o-- "0..1" Comment
 Expense *-- "1" DateExpBook
