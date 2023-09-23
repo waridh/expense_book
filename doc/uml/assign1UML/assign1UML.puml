@@ -2,8 +2,9 @@
   skinparam classAttributeIconSize 0
 
 class AppCompatActivity {
-
+  +super()
 }
+
 class ExpenseListAdapter{
   - entries : ExpenseList
   + getView(position : int, convertView : View, parent : ViewGroup)
@@ -42,19 +43,9 @@ class Expense {
   +equals(other : Expense) : boolean
 }
 
-class CanadianDollar {
-  -value : String
-  +getValue() : String
-}
-
 class Comment {
   -content : String
   +getComment() : String
-}
-
-class DateExpBook {
-  -date : String
-  +getDate() : String
 }
 
 class ExpenseList {
@@ -92,12 +83,6 @@ MainActivity -- NewEntryActivity : "Create new expense entry"
 MainActivity -- DetailedExpenseActivity : "Shows detail of an expense entry"
 
 ExpenseList *-- "0..*" Expense
-Expense *-- "1" CanadianDollar
 Expense o-- "0..1" Comment
-Expense *-- "1" DateExpBook
 
-note bottom of DateExpBook
-  Date has been abstracted into its own class so that it can handle its own
-  format checking. Returns the string when getDate() is called.
-end note
 @enduml

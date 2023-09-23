@@ -4,4 +4,5 @@
     <string name="bottom_button_text">Add Entry</string>
     <string name="header_text">waridh-ExpBook</string>
     <string name="add_expense_button">Add Expense</string>
+    <string name="back_button">Back</string>
 </resources>

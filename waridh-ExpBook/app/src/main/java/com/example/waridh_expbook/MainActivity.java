@@ -37,12 +37,17 @@ public class MainActivity extends AppCompatActivity {
                 this, this.entries);
 
         this.expenseListView.setAdapter(this.expenseAdapter);
+        this.expenseListView.setOnItemClickListener(expenseListClick);
     }
 
-    private AdapterView.OnItemClickListener listClick = new AdapterView.OnItemClickListener() {
+    /**
+     * Anonymous class for when the user clicks on a list item.
+     */
+    private AdapterView.OnItemClickListener expenseListClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             /* TODO: Put in the code that will open up the detailed view of the expense */
+            openEntryDetails(position);
         }
     };
 
@@ -58,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This method is used to open up the detailed view of an entry.
      */
-    public void openEntryDetails() {
-
+    public void openEntryDetails(int index) {
+        Intent intent = new Intent(this, DetailedExpenseActivity.class);
+        startActivity(intent);
     }
 }

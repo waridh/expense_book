@@ -5,7 +5,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class DetailedExpenseActivity extends AppCompatActivity {
+public class DetailedExpenseActivity extends SubActivity {
+
 
     /**
      *
@@ -14,7 +15,10 @@ public class DetailedExpenseActivity extends AppCompatActivity {
      *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
      *
      */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_details);
     }
+
 }
