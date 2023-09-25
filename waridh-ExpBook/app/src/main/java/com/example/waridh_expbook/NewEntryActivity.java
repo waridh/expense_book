@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * This is the class for the user adding a new activity. The goal is to send a new object of the
  * Expense class back to the main activity.
  */
-public class NewEntryActivity extends AppCompatActivity {
+public class NewEntryActivity extends SubActivity {
     /**
      * Default constructor for AppCompatActivity. All Activities must have a default constructor
      * for API 27 and lower devices or when using the default

@@ -5,6 +5,15 @@ class AppCompatActivity {
   +super()
 }
 
+class DialogFragment {
+  +super()
+}
+
+abstract class SubActivity {
+  +returnToMain(view : View)
+  +super()
+}
+
 class ExpenseListAdapter{
   - entries : ExpenseList
   + getView(position : int, convertView : View, parent : ViewGroup)
@@ -23,6 +32,10 @@ class DetailedExpenseActivity {
   + super()
 }
 
+class EditEntryFragment {
+  + super()
+}
+
 class NewEntryActivity {
   - entries : ExpenseList
   + super()
@@ -32,7 +45,7 @@ class NewEntryActivity {
 class Expense {
   - name : String // 15 characters
   - monthStarted : String // yyyy-mm format
-  - monthlyCharge : CanadianDollar // CAD
+  - monthlyCharge : String // CAD
   - comment : String // 20 characters and optional
 
   +setName(name : String) : void
@@ -41,11 +54,6 @@ class Expense {
   +getComment() : String
   +getDate() : String
   +equals(other : Expense) : boolean
-}
-
-class Comment {
-  -content : String
-  +getComment() : String
 }
 
 class ExpenseList {
@@ -57,12 +65,16 @@ class ExpenseList {
   +get(index : int) : Expense
 }
 
-note left of ExpenseList
+note bottom of ExpenseList
   This is the class representing the data structure that holds all the expenses
   listing.
 end note
 
-note left of MainActivity
+note bottom of Expense
+  Need to have setters so that editing of pre-existing expenses is possible.
+end note
+
+note bottom of MainActivity
   This is the MainActivity class in Android studio. This is effectively the
   entrance program. This means that when you launch up the application, this
   is the first class that the program effectively enters.
@@ -71,8 +83,14 @@ end note
 /' This is the classes that inherit from AppCompatActivity, which is all the
 activities '/
 AppCompatActivity <|-- MainActivity
-AppCompatActivity <|-- DetailedExpenseActivity
-AppCompatActivity <|-- NewEntryActivity
+AppCompatActivity <|-- SubActivity
+
+/' The classes that extends SubActivity '/
+SubActivity <|-- DetailedExpenseActivity
+SubActivity <|-- NewEntryActivity
+
+/' The class that inherits from Fragment '/
+DialogFragment <|-- EditEntryFragment
 
 /' This is the relationship for the MainActivity '/
 MainActivity *-- "1" ExpenseList
@@ -81,8 +99,8 @@ MainActivity *-- "1" ExpenseListAdapter
 /' For relationships between the activities '/
 MainActivity -- NewEntryActivity : "Create new expense entry"
 MainActivity -- DetailedExpenseActivity : "Shows detail of an expense entry"
+DetailedExpenseActivity -- EditEntryFragment : "Opens fragment when editing"
 
 ExpenseList *-- "0..*" Expense
-Expense o-- "0..1" Comment
 
 @enduml

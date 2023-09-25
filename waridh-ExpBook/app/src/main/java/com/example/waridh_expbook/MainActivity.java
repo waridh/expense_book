@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String ARG_DETAILED_EXPENSE = "entry";
 
     /* Data structure for storing the expenses entries */
     private ExpenseList entries;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void openEntryDetails(int index) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable("entry", this.entries.get(index)); // Bundling the entry of interest
+        bundle.putSerializable(ARG_DETAILED_EXPENSE, this.entries.get(index)); // Bundling the entry of interest
 
         /* Packaging the bundle into the intent */
         Intent intent = new Intent(this, DetailedExpenseActivity.class);

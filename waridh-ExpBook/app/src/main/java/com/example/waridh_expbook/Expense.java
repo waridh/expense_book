@@ -41,13 +41,14 @@ public class Expense implements Serializable {
         this.comment = comment;
     }
 
-    public String getMonthStarted() {
-        return monthStarted;
-    }
+    /**
+     * Getter for the month started. Since string, a new object does not need to be created due to
+     * immutability.
+     * @return the string representing the month started.
+     */
+    public String getMonthStarted() { return monthStarted; }
 
-    public String getMonthlyCharge() {
-        return monthlyCharge;
-    }
+    public String getMonthlyCharge() { return monthlyCharge; }
 
     /**
      * This method returns the comment that is stored in this expense entry. If it doesn't exist
