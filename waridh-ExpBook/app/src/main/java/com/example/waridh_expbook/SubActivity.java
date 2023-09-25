@@ -1,5 +1,7 @@
 package com.example.waridh_expbook;
 
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
@@ -7,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * to let that happen.
  */
 public abstract class SubActivity extends AppCompatActivity {
-    public void returnToMain() {
+    public void returnToMain(View view) {
         finish();
     }
 }

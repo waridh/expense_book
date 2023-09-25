@@ -64,7 +64,13 @@ public class MainActivity extends AppCompatActivity {
      * This method is used to open up the detailed view of an entry.
      */
     public void openEntryDetails(int index) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("entry", this.entries.get(index)); // Bundling the entry of interest
+
+        /* Packaging the bundle into the intent */
         Intent intent = new Intent(this, DetailedExpenseActivity.class);
+        intent.putExtras(bundle);
+
         startActivity(intent);
     }
 }

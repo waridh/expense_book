@@ -24,4 +24,18 @@ public class ExpenseUnitTest {
         assertEquals(false, cUT.monthStartedCheck("2000-00"));
         assertEquals(false, cUT.monthStartedCheck("2000-0"));
     }
+
+    @Test
+    public void regexCheck2() {
+        assertEquals(false, cUT.monthlyChargeCheck("2023-11"));
+        assertEquals(false, cUT.monthlyChargeCheck("asldkj"));
+        assertEquals(false, cUT.monthlyChargeCheck("2012-12"));
+        assertEquals(false, cUT.monthlyChargeCheck("2000-13"));
+        assertEquals(false, cUT.monthlyChargeCheck("2000-00"));
+        assertEquals(false, cUT.monthlyChargeCheck("2000-0"));
+        assertEquals(true, cUT.monthlyChargeCheck("0.52"));
+        assertEquals(true, cUT.monthlyChargeCheck("5.30"));
+        assertEquals(true, cUT.monthlyChargeCheck("5"));
+        assertEquals(true, cUT.monthlyChargeCheck("0"));
+    }
 }

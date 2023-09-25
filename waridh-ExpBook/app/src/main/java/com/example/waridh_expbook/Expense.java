@@ -1,15 +1,9 @@
 package com.example.waridh_expbook;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Expense {
-    public enum ConstraintCheck {
-        NAME,
-        MONTH_STARTED,
-        MONTHLY_CHARGE,
-        COMMENT,
-        PASS
-    }
+public class Expense implements Serializable {
     private String name;
     private String monthStarted;
     private String monthlyCharge;
@@ -17,7 +11,7 @@ public class Expense {
     /* Comment check. Relying on the Null value might result in bugs later, so I
     * will be using a flag. */
     private boolean commentFlag;
-    private Comment comment;
+    private String comment;
 
     /**
      * Base constructor.
@@ -25,26 +19,26 @@ public class Expense {
     public Expense() {
         this.commentFlag = false;   // This value should always be true
     }
-    public Expense(String name, String monthStarted, String charge) {
-        /**
-         * Constructor requires the name, month started, and monthly charge
-         */
 
+    /**
+     * Constructor requires the name, month started, and monthly charge
+     */
+    public Expense(String name, String monthStarted, String charge) {
         this.commentFlag = false;
         this.name = name;
         this.monthStarted = monthStarted;
         this.monthlyCharge = charge;
     }
 
+    /**
+     * Constructor requires the name, month started, and monthly charge
+     */
     public Expense(String name, String monthStarted, String charge, String comment) {
-        /**
-         * Constructor requires the name, month started, and monthly charge
-         */
         this.name = name;
         this.monthStarted = monthStarted;
         this.monthlyCharge = charge;
         this.commentFlag = true;
-        this.comment = new Comment(comment);
+        this.comment = comment;
     }
 
     public String getMonthStarted() {
@@ -60,20 +54,18 @@ public class Expense {
      * then the method will return null.
      * @return Either the stored comment, or null.
      */
-    public Comment getComment() {
+    public String getComment() {
         if (this.commentFlag) return comment;
         else return null;   // Going to get rid of this null soon.
     }
 
     /**
-     * This method takes in data and does checks on if the input is of the correct format.
-     * @return An ArrayList with the ConstraintCheck enums. So that the program would know which
-     * fields are of incorrect format.
+     * A more elegant way to let other classes know if this entry has a comment or not.
+     * @return A boolean representing if the expense class has a comment or not. True if there is
+     * a comment, and false if there is no comment.
      */
-    public ArrayList<ConstraintCheck> add() {
-        ArrayList<ConstraintCheck> constraintList = new ArrayList<ConstraintCheck>();
-        constraintList.add(ConstraintCheck.PASS);
-        return constraintList;
+    public boolean getCommentFlag() {
+        return commentFlag;
     }
 
     /**
@@ -81,8 +73,18 @@ public class Expense {
      * @param name This is the string under test
      * @return a boolean representing if the string is following constraint or not.
      */
-    public boolean nameCheck(String name) {
-        return name.length() <= 15;
+    public static boolean nameCheck(String name) {
+        if (name == null) return false;
+        return (name.length() <= 15 && name.length() > 0);
+    }
+
+    /**
+     * This is the character length check for the comments.
+     * @param comment The comment under check
+     * @return boolean that says if the string is under the length constraint given.
+     */
+    public static boolean commentCheck(String comment) {
+        return (comment.length() <= 20 && comment.length() > 0);
     }
 
     /**
@@ -90,10 +92,10 @@ public class Expense {
      * constraint.
      * @return a boolean that is true when it is following constraint, and false when not.
      */
-    public boolean monthStartedCheck(String monthStarted) {
-        if (monthStarted.matches("^[0-9]{4}-[0-9]{2}$")) {
+    public static boolean monthStartedCheck(String date) {
+        if (date.matches("^[0-9]{4}-[0-9]{2}$")) {
             int year, month;
-            String[] tokenized = monthStarted.split("-");
+            String[] tokenized = date.split("-");
             year = Integer.parseInt(tokenized[0]);
             month = Integer.parseInt(tokenized[1]);
             /* This blocks out invalid months and years. */
@@ -103,8 +105,24 @@ public class Expense {
         else return false;
     }
 
-    public boolean monthlyChargeCheck() {
-        return false;
+    /**
+     * This method will check if the monthly expense is correct
+     * @return
+     */
+    public static boolean monthlyChargeCheck(String charge) {
+        /* regex for checking if the user input is a number. */
+        if (charge.matches(
+                        "^[0-9]+\\.[0-9]{2}$"
+                ) || charge.matches(
+                        "^[0-9]+$"
+                )) {
+            float value;
+            value = Float.parseFloat(charge);
+            /* This blocks out invalid months and years. */
+            if (0.0 <= value) return true;
+            else return false;
+        }
+        else return false;
     }
 
     public String getName() {
