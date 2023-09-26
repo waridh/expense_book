@@ -42,7 +42,7 @@ public class DetailedExpenseActivity extends SubActivity {
 
         /* Getting the contents of the intent */
         this.inIntent = this.getIntent();
-        this.inExpense = (Expense) this.inIntent.getExtras().getSerializable(MainActivity.ARG_DETAILED_EXPENSE);
+        this.inExpense = extractExpense(this.inIntent);
         fragmentState = false;  // The fragment should not be showing immediately when you open
 
         loadDetails();  // Loading the data from the Expense object

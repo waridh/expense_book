@@ -2,14 +2,14 @@ package com.example.waridh_expbook;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity {
-    public static final String ARG_DETAILED_EXPENSE = "entry";
+public class MainActivity extends BaseActivity {
 
     /* Data structure for storing the expenses entries */
     private ExpenseList entries;
@@ -52,21 +52,35 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void openNewEntry(View view) {
+    public void addEntryButtonFc(View view) {
         /**
          * This method will open up the view where the user can input a new expense entry.
          * @param View view - view
          */
+//        Intent intent = new Intent(this, NewEntryActivity.class);
+//        startActivity(intent );
+        openNewEntryForResult();
+    }
+
+    /**
+     * This method launches the new entry activity, and then also does handling for the returned
+     * result.
+     */
+    private void openNewEntryForResult() {
         Intent intent = new Intent(this, NewEntryActivity.class);
-        startActivity(intent);
+        activityLauncher.launch(intent, result -> {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                Intent data = result.getData();
+                // TODO: Handle when data is returned
+            }
+        });
     }
 
     /**
      * This method is used to open up the detailed view of an entry.
      */
     public void openEntryDetails(int index) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_DETAILED_EXPENSE, this.entries.get(index)); // Bundling the entry of interest
+        Bundle bundle = bundleExpense(this.entries.get(index));
 
         /* Packaging the bundle into the intent */
         Intent intent = new Intent(this, DetailedExpenseActivity.class);

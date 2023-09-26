@@ -125,7 +125,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:onClick="addEntry"
                 android:layout_marginEnd="12dp"
                 android:backgroundTint="@color/design_default_color_primary"
                 android:text="@string/edit_expense_button" />

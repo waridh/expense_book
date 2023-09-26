@@ -37,9 +37,6 @@ public class NewEntryActivity extends SubActivity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        /**
-         * The android onCreate.
-         */
         super.onCreate(savedInstanceState); // The super constructor
         setContentView(R.layout.activity_new_entry);
 
@@ -80,10 +77,10 @@ public class NewEntryActivity extends SubActivity {
         applyFilters();
     }
 
-    private void applyFilters() {
 
+    private void applyFilters() {
         // Creating the input filter for the edit texts
-        InputFilter blockSpecChar = new InputFilter() {
+        InputFilter blockSpecChar = new InputFilter() { // Keeping this in scope.
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
                 final String blockCharacterSet = "./#";
@@ -118,27 +115,61 @@ public class NewEntryActivity extends SubActivity {
     }
 
     private boolean checkFields() {
+        return checkFields(this.nameEdit, this.monthStartedEdit, moneyEdit);
+    }
+
+    /**
+     * This method will only return true when all the required user input constraints are met.
+     * The nameEt must be 15 characters or less
+     * The month started must be in the format of yyyy-mm, we check for valid month, but not year
+     * The monthly charge has to be a positive canadian dollar value. Enforces that the field is not
+     * empty.
+     * @param nameEt The name field edit text box. Just need to check character length limit.
+     * @param monthStartedEt The month started has length check and valid month check.
+     * @param monthlyChargeEt
+     * @return
+     */
+    public static boolean checkFields(
+            EditText nameEt, EditText monthStartedEt, EditText monthlyChargeEt) {
         boolean returnValue = true;
-        if (this.nameEdit.length() == 0) {
-            this.nameEdit.setError("This field is required");
+        String nameS, monthStartedS;
+        /* This is the check to make sure that the name field is not empty */
+        nameS = nameEt.getText().toString().trim();
+        if (isBlank(nameEt)) {
+            nameEt.setError("This field is required");
             returnValue = false;
-        } else returnValue = (returnValue && true);
-        if (this.monthStartedEdit.length() == 0) {
-            this.monthStartedEdit.setError("This field is required");
+        } else if (nameS.length() > 15) {
+            nameEt.setError("Over the character limit of 15");
+            returnValue = false;
+        }
+        else returnValue = returnValue;
+
+        /* Checking the month started formatting */
+        monthStartedS = monthStartedEt.getText().toString().trim();
+        if (monthStartedS.isEmpty()) {
+            monthStartedEt.setError("This field is required");
             returnValue = false;
         }
         else if (
                 !Expense.monthStartedCheck(
-                        this.monthStartedEdit.getText().toString()
-                ))
-            this.monthStartedEdit.setError(
+                        monthStartedS
+                )) {
+            monthStartedEt.setError(
                     "The input date is not valid. Please enter a real date.");
-        else returnValue = (returnValue && true);
-        if (this.moneyEdit.length() == 0) {
-            this.moneyEdit.setError("This field is required");
             returnValue = false;
-        } else returnValue = (returnValue && true);
+        }
+        else returnValue = returnValue;
+
+        /* Dealing with the money input value. No need to degit test since that is UI locked */
+        if (isBlank(monthlyChargeEt)) {
+            monthlyChargeEt.setError("This field is required");
+            returnValue = false;
+        } else returnValue = returnValue;
         return returnValue;
+    }
+
+    public static boolean isBlank(EditText et) {
+        return et.getText().toString().trim().isEmpty();
     }
 
     /**
@@ -174,8 +205,7 @@ public class NewEntryActivity extends SubActivity {
                     this.moneyEdit.getText().toString(),
                     this.commentEdit.getText().toString()
             );
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            returnResultToMain(bundleExpense(newEntry));
         }
     }
 }

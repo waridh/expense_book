@@ -5,8 +5,17 @@ class AppCompatActivity {
   +super()
 }
 
+abstract class BaseActivity {
+  #ExpBookActivityResult<Intent, ActivityResult>
+  +super()
+}
+
 class DialogFragment {
   +super()
+}
+
+class ExpBookActivityResult {
+  -launcher : ActivityresultLauncher<Input>
 }
 
 abstract class SubActivity {
@@ -70,6 +79,11 @@ note bottom of ExpenseList
   listing.
 end note
 
+note bottom of ExpBookActivityResult
+  This class is the encapsulation of the new activity result system that google
+  decided to impose on people, since the old method is now deprecated.
+end note
+
 note bottom of Expense
   Need to have setters so that editing of pre-existing expenses is possible.
 end note
@@ -82,8 +96,15 @@ end note
 
 /' This is the classes that inherit from AppCompatActivity, which is all the
 activities '/
-AppCompatActivity <|-- MainActivity
-AppCompatActivity <|-- SubActivity
+AppCompatActivity <|-- BaseActivity
+
+/' Now a lot of things are subclasses of BaseActivity so that we could send
+objects around '/
+BaseActivity <|-- MainActivity
+BaseActivity <|-- SubActivity
+
+/' BaseActivity Components '/
+BaseActivity *-- "1" ExpBookActivityResult
 
 /' The classes that extends SubActivity '/
 SubActivity <|-- DetailedExpenseActivity

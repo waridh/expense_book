@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,6 +123,9 @@ public class EditEntryFragment extends DialogFragment {
         /* Order matters here. We are setting the values in the edit text box */
         setTextBoxes();
 
+        /* The following methods are for setting constraints on the edit texts */
+        applyFilters();
+
         return fView;
     }
 
@@ -137,6 +142,19 @@ public class EditEntryFragment extends DialogFragment {
         }
     };
 
+    View.OnClickListener submitChangesButtonListener = new View.OnClickListener() {
+
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            submitButtonFc();  // This is the best way to close a dialog fragment.
+        }
+    };
+
     /**
      * This method sets the texts for the EditText text boxes. This method has to be called after
      * both the strings from argument has been extracted, and the EditText text boxes have been
@@ -149,5 +167,55 @@ public class EditEntryFragment extends DialogFragment {
         if (fCommentFlag) fCommentEt.setText(fComment);
     }
 
+    // TODO: Set the filters for the edit texts
+    private void applyFilters() {
+
+        // Creating the input filter for the edit texts
+        InputFilter blockSpecChar = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                final String blockCharacterSet = "./#";
+                if (source != null && blockCharacterSet.contains(("" + source))) {
+                    return "";
+                }
+                return null;
+            }
+        };
+        // Applying the user input filter into the edit texts
+        this.fMonthlyExpenseEt.setFilters(
+                new InputFilter[] {
+                        new DecimalDigitInputFilter(
+                                100, 2
+                        )
+                });
+        this.fMonthStartedEt.setFilters(
+                new InputFilter[] {
+                        blockSpecChar,
+                        new InputFilter.LengthFilter(7)
+                });
+        this.fCommentEt.setFilters(
+                new InputFilter[] {
+                        new InputFilter.LengthFilter(20)
+                }
+        );
+        this.fNameEt.setFilters(
+                new InputFilter[] {
+                        new InputFilter.LengthFilter(15)
+                }
+        );
+    }
+
+    private boolean checkFields() {
+        return NewEntryActivity.checkFields(
+                this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt
+        );
+    }
+
     // TODO: Send the data back to the activity
+
+    private void submitButtonFc() {
+        if (checkFields()) {
+            return;
+        }
+    }
 }
