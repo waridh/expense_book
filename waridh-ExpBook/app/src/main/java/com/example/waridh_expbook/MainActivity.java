@@ -70,17 +70,32 @@ public class MainActivity extends BaseActivity {
         Intent intent = new Intent(this, NewEntryActivity.class);
         activityLauncher.launch(intent, result -> {
             if (result.getResultCode() == Activity.RESULT_OK) {
-                Intent data = result.getData();
-                // TODO: Handle when data is returned
+
+                /* Taking the input and updating the ExpenseList */
+                updateExpenseList(
+                        extractExpense(
+                                result.getData() != null ? result.getData() : null,
+                                ARG_RETURNED_EXPENSE
+                        )
+                );
             }
         });
+    }
+
+    /**
+     * This method updates the ExpenseList by added the new
+     * @param newEntry
+     */
+    private void updateExpenseList(Expense newEntry) {
+        if (newEntry != null) this.entries.add(newEntry);
+        this.expenseAdapter.notifyDataSetChanged();
     }
 
     /**
      * This method is used to open up the detailed view of an entry.
      */
     public void openEntryDetails(int index) {
-        Bundle bundle = bundleExpense(this.entries.get(index));
+        Bundle bundle = bundleExpense(this.entries.get(index), ARG_DETAILED_EXPENSE);
 
         /* Packaging the bundle into the intent */
         Intent intent = new Intent(this, DetailedExpenseActivity.class);

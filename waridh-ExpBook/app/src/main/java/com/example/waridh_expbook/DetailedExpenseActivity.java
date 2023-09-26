@@ -1,5 +1,6 @@
 package com.example.waridh_expbook;
 
+import android.app.Activity;
 import android.app.AppComponentFactory;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +8,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
 public class DetailedExpenseActivity extends SubActivity {
@@ -17,6 +20,7 @@ public class DetailedExpenseActivity extends SubActivity {
 
     /* Expense details */
     private Expense inExpense;
+    private Expense editedExpense;
     private String monthlyChargeS, monthStartedS, nameS, commentS;
     private boolean commentState;
 
@@ -27,6 +31,8 @@ public class DetailedExpenseActivity extends SubActivity {
     /* Fragment related attributes */
     private boolean fragmentState;
 
+    /* State controlling flags */
+    private boolean editedState;
 
     /**
      *
@@ -40,12 +46,15 @@ public class DetailedExpenseActivity extends SubActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_details);
 
+        /* Activity State control */
+        this.editedState = false;
+
         /* Getting the contents of the intent */
         this.inIntent = this.getIntent();
-        this.inExpense = extractExpense(this.inIntent);
+        this.inExpense = extractExpense(this.inIntent, ARG_DETAILED_EXPENSE);
         fragmentState = false;  // The fragment should not be showing immediately when you open
 
-        loadDetails();  // Loading the data from the Expense object
+        loadDetails(inExpense);  // Loading the data from the Expense object
 
         /* Linking the UI elements to objects */
         monthlyChargeDtv = findViewById(R.id.monthly_charge_dtv);
@@ -55,18 +64,50 @@ public class DetailedExpenseActivity extends SubActivity {
         commentDv = findViewById(R.id.comment_view);
 
         setDetailedTextViews();
+
+        /* Setting up a fragment result listener */
+        setupFragmentResultListener();
+    }
+
+    /**
+     * This method installs the fragment result listener, meaning that when the fragment sends
+     * anything, this activity will process it immediately. Updated the current expense and package
+     * it for the main location.
+     */
+    private void setupFragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(
+                EditEntryFragment.ARG_REQUEST_KEY,
+                this,
+                new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(
+                            @NonNull String requestKey, @NonNull Bundle bundle
+                    ) {
+                        // Going to mostly be unwrapping a bundle
+                        editedExpense = extractExpense(
+                                bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
+                        updateExpenseDetails(editedExpense);
+                        // TODO: Need to send the data back to the main activity
+                        fragmentState = false;  // Flipping the state off.
+                    }
+                });
+    }
+
+    private void updateExpenseDetails(Expense expense) {
+        loadDetails(expense);
+        setDetailedTextViews();
     }
 
     /**
      * This method loads the details from the Expense object into strings
      */
-    private void loadDetails() {
+    private void loadDetails(Expense expense) {
         /* Setting the string value in case that the user will edit it */
-        nameS = inExpense.getName();
-        monthStartedS = inExpense.getMonthStarted();
-        monthlyChargeS = inExpense.getMonthlyCharge();
-        commentState = inExpense.getCommentFlag();
-        loadComment();
+        nameS = expense.getName();
+        monthStartedS = expense.getMonthStarted();
+        monthlyChargeS = expense.getMonthlyCharge();
+        commentState = expense.getCommentFlag();
+        loadComment(expense);
     }
 
     private void setDetailedTextViews() {
@@ -74,23 +115,32 @@ public class DetailedExpenseActivity extends SubActivity {
         monthStartedDtv.setText(monthStartedS);
         nameDtv.setText(nameS);
         /* Need to check if there are comments or not */
-        setCommentDetailedTextView();
+        setCommentDetailedTextView(commentS);
+    }
+
+    private void setDetailedTextViews(
+            String name, String monthlyCharge, String monthStarted, String comment) {
+        monthlyChargeDtv.setText(monthlyCharge);
+        monthStartedDtv.setText(monthStarted);
+        nameDtv.setText(name);
+        /* Need to check if there are comments or not */
+        setCommentDetailedTextView(comment);
     }
 
     /**
      * This method is just flow control for the comment. Hides the comment if it doesn't exist else
      * it will set the text.
      */
-    private void setCommentDetailedTextView() {
-        if (commentState) commentDtv.setText(commentS);
+    private void setCommentDetailedTextView(String comment) {
+        if (Expense.commentCheck(comment)) commentDtv.setText(comment);
         else commentDv.setVisibility(View.GONE);    // The view does not need to show up
     }
 
     /**
      * This method loads the comment if it exists, else it will be set to null
      */
-    private void loadComment() {
-        if (commentState) commentS = inExpense.getComment();
+    private void loadComment(Expense expense) {
+        if (expense.getCommentFlag()) commentS = expense.getComment();
         else commentS = null;
     }
 
@@ -99,6 +149,10 @@ public class DetailedExpenseActivity extends SubActivity {
         else return EditEntryFragment.newInstance(nameS, monthStartedS, monthlyChargeS);
     }
 
+    /**
+     * This method opens the edit value fragment.
+     * @param view
+     */
     public void editButtonFc(View view) {
         displayFragment();
     }
@@ -112,14 +166,18 @@ public class DetailedExpenseActivity extends SubActivity {
         /* Beginning fragment transaction */
         FragmentManager fragmentManager = getSupportFragmentManager();
         eeFragment.show(fragmentManager, "edit_details");
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        /* Adding the fragment class into the transaction */
-//        fragmentTransaction.add(
-//                R.id.edit_detail_fc, eeFragment
-//        ).addToBackStack(null).commit();
 
         /* Artifact from this operation */
         this.fragmentState = true;
+    }
+
+    // TODO: Need to have different returns for when there is and isn't an edit made
+    @Override
+    public void returnToMain(View view) {
+        if (editedState) {
+            // TODO: Finalize how the edited expense is stored.
+        } else {    // User did not make a change
+            setResult(Activity.RESULT_CANCELED); finish();
+        }
     }
 }

@@ -21,6 +21,10 @@ public class EditEntryFragment extends DialogFragment {
     private static final String ARG_COMMENT = "param4";
     private static final String ARG_COMMENT_CHECK = "param5";
 
+    /* Key for accessing the bundle from the fragment */
+    public static final String ARG_FRAG_BUNDLE_KEY = "j312i&da";
+    public static final String ARG_REQUEST_KEY = "j21k3j0s*A213A(*";
+
     /* Fragment edit */
     private int margin;
 
@@ -119,6 +123,7 @@ public class EditEntryFragment extends DialogFragment {
 
         /* Setting up the listeners */
         this.fCancelB.setOnClickListener(cancelButtonListener);
+        this.fSubmitB.setOnClickListener(submitChangesButtonListener);
 
         /* Order matters here. We are setting the values in the edit text box */
         setTextBoxes();
@@ -167,7 +172,6 @@ public class EditEntryFragment extends DialogFragment {
         if (fCommentFlag) fCommentEt.setText(fComment);
     }
 
-    // TODO: Set the filters for the edit texts
     private void applyFilters() {
 
         // Creating the input filter for the edit texts
@@ -211,11 +215,36 @@ public class EditEntryFragment extends DialogFragment {
         );
     }
 
-    // TODO: Send the data back to the activity
-
     private void submitButtonFc() {
         if (checkFields()) {
-            return;
+            sendResult(acceptUserInput());
+            dismiss();
         }
+    }
+
+    private Expense acceptUserInput() {
+        updateLocalRegisters();
+        return generateExpense();
+    }
+    private void updateLocalRegisters() {
+        fName = fNameEt.getText().toString();
+        fMonthStarted = fMonthStartedEt.getText().toString();
+        fMonthlyExpense = fMonthlyExpenseEt.getText().toString();
+        fComment = fCommentEt.getText().toString();
+        if (Expense.commentCheck(fComment)) fCommentFlag = true;
+    }
+    private Expense generateExpense() {
+        Expense returnExpense = Expense.createNewExpense(
+                fName,
+                fMonthStarted,
+                fMonthlyExpense,
+                fComment
+        );
+        return returnExpense;
+    }
+
+    private void sendResult(Expense newExpense) {
+        Bundle result = BaseActivity.bundleExpense(newExpense, ARG_FRAG_BUNDLE_KEY);
+        getParentFragmentManager().setFragmentResult(ARG_REQUEST_KEY, result);
     }
 }

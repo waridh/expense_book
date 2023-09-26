@@ -16,9 +16,7 @@ public class ExpenseList {
         return expenses.size();
     }
 
-    public void add(Expense row) {
-        this.expenses.add(row);
-    }
+    public void add(Expense row) { this.expenses.add(row);}
 
     public Expense get(int i) {
         return expenses.get(i);

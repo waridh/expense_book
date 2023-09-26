@@ -16,9 +16,7 @@ public class Expense implements Serializable {
     /**
      * Base constructor.
      */
-    public Expense() {
-        this.commentFlag = false;   // This value should always be true
-    }
+    public Expense() {this.commentFlag = false;}
 
     /**
      * Constructor requires the name, month started, and monthly charge
@@ -39,6 +37,26 @@ public class Expense implements Serializable {
         this.monthlyCharge = charge;
         this.commentFlag = true;
         this.comment = comment;
+    }
+
+    /**
+     * This method generates the proper new expense based on if the user has given
+     * a comment. The assumption is that this function gets called after the input check has
+     * completed.
+     * @return An Expense object constructed with or without the comment field.
+     */
+    public static Expense createNewExpense(
+            String nameText,
+            String monthStartedText,
+            String chargeText,
+            String commentText) {
+        Expense retExpense; // Declaration of the output
+        if (commentCheck(commentText)) {
+            retExpense = new Expense(nameText, monthStartedText, chargeText, commentText);
+        } else {
+            retExpense = new Expense(nameText, monthStartedText, chargeText);   // no comment
+        }
+        return retExpense;
     }
 
     /**
@@ -85,7 +103,8 @@ public class Expense implements Serializable {
      * @return boolean that says if the string is under the length constraint given.
      */
     public static boolean commentCheck(String comment) {
-        return (comment.length() <= 20 && comment.length() > 0);
+        if (comment == null) return false;
+        else return comment.length() <= 20 && !comment.trim().isEmpty();
     }
 
     /**

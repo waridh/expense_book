@@ -13,27 +13,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected final ExpBookActivityResult<Intent, ActivityResult> activityLauncher
             = ExpBookActivityResult.registerActivityForResult(this);
 
+    /* Setting the commands for unpacking intents */
     public static final String ARG_DETAILED_EXPENSE = "entry";
+    public static final String ARG_RETURNED_EXPENSE = "entry";
+    public static final String ARG_EXPENSE_LIST_COMMAND = "expense_command";
 
     /**
      * This method is for bundling an expense into a bundle item, then returning it
      * @param expense
      * @return
      */
-    public static Bundle bundleExpense(Expense expense) {
+    public static Bundle bundleExpense(Expense expense, String key) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_DETAILED_EXPENSE, expense);
-        return bundle;
-    }
-
-    /**
-     * This is an overload that will allow the method to also add on to a bundle
-     * @param expense The Expense object that is being added to the transfer.
-     * @param bundle The bundle that Expense object is being added to.
-     * @return The bundle with the Expense objected added to it.
-     */
-    public static Bundle bundleExpense(Expense expense, Bundle bundle) {
-        bundle.putSerializable(ARG_DETAILED_EXPENSE, expense);
+        bundle.putSerializable(key, expense);
         return bundle;
     }
 
@@ -43,8 +35,12 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param intent Any intent object that has an Expense object stored within.
      * @return The Expense object that is stored in the intent.
      */
-    public static Expense extractExpense(Intent intent) {
-        return (Expense) Objects.requireNonNull(intent.getExtras()).getSerializable(ARG_DETAILED_EXPENSE);
+    public static Expense extractExpense(Intent intent, String key) {
+        return (Expense) Objects.requireNonNull(intent.getExtras()).getSerializable(key);
+    }
+
+    public static Expense extractExpense(Bundle bundle, String key) {
+        return (Expense) Objects.requireNonNull(bundle).getSerializable(key);
     }
 
 }

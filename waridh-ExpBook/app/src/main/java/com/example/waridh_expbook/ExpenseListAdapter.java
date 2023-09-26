@@ -75,10 +75,10 @@ public class ExpenseListAdapter extends BaseAdapter {
         TextView expenseName = (TextView)           view.findViewById(R.id.rowName);
         TextView monthlyCost = (TextView)           view.findViewById(R.id.cost);
 
-        /* Setting the text of the list based on its position */
+        /* Setting the text of the list */
         monthStartedText.setText(this.expenses.getMonthStarted(position));
         expenseName.setText(this.expenses.getName(position));
-        monthlyCost.setText(this.expenses.getName(position));
+        monthlyCost.setText(this.expenses.getMonthlyCharge(position));
 
         return view;
     }
