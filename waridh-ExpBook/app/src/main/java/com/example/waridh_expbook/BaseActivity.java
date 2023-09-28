@@ -79,7 +79,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             nameEt.setError("Over the character limit of 15");
             returnValue = false;
         }
-        else returnValue = returnValue;
 
         /* Checking the month started formatting */
         monthStartedS = monthStartedEt.getText().toString().trim();
@@ -95,13 +94,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                     "The input date is not valid. Please enter a real date.");
             returnValue = false;
         }
-        else returnValue = returnValue;
 
         /* Dealing with the money input value. No need to degit test since that is UI locked */
         if (isBlank(monthlyChargeEt)) {
             monthlyChargeEt.setError("This field is required");
             returnValue = false;
-        } else returnValue = returnValue;
+        }
         return returnValue;
     }
 

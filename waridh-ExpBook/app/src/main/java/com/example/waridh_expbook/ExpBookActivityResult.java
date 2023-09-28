@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This class is the new method in which data is now getting passed between activities.
  * Citation:
- * https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative
+ * <a href="https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative">...</a>
  * @param <Input>
  * @param <Result>
  */

@@ -106,6 +106,7 @@ public class EditEntryFragment extends DialogFragment {
             operationMode = (OpMode) requireArguments().getSerializable(ARG_OP_MODE);
             EEFOptions option = (EEFOptions) requireArguments().getSerializable(
                     ARG_EXISTANCE_CHECK);
+            /* Checking if we have an input expense or not. Also include the flow control for that*/
             switch(Objects.requireNonNull(option)) {
                 case SOME:
                     argExpense = (Expense) getArguments().getSerializable(ARG_EXPENSE);
@@ -122,6 +123,7 @@ public class EditEntryFragment extends DialogFragment {
                     break;
                 default:
             }
+            /* The effects from the operation mode */
             switch(operationMode) {
                 case EDIT:
                     fragmentHeaderS = "Edit entry";
@@ -266,38 +268,31 @@ public class EditEntryFragment extends DialogFragment {
                 new InputFilter[] {new InputFilter.LengthFilter(15)});
     }
 
+    /**
+     * This method does a local state check on if the user input meets the required constraints.
+     * @return Boolean that is true when the user input follows the constraint, and false if not
+     */
     private boolean checkFields() {
         return BaseActivity.checkFields(
                 this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt);
     }
 
-    private Expense acceptUserInput() {
-        updateLocalRegisters();
-        return generateExpense();
-    }
-    private void updateLocalRegisters() {
-        fName = fNameEt.getText().toString();
-        fMonthStarted = fMonthStartedEt.getText().toString();
-        fMonthlyExpense = fMonthlyExpenseEt.getText().toString();
-        fComment = fCommentEt.getText().toString();
-    }
-
     /**
-     * This method creates an expense from the data stored in the local scope.
-     * @return A new expense created from the local fragment scope data.
+     * Generates an Expense object from the user input
+     * @return The Expense object that contains the data that the user input.
      */
-    private Expense generateExpense() {
+    private Expense acceptUserInput() {
         return Expense.newInstance(
-                fName,
-                fMonthStarted,
-                fMonthlyExpense,
-                fComment
+                fNameEt.getText().toString(),
+                fMonthStartedEt.getText().toString(),
+                fMonthlyExpenseEt.getText().toString(),
+                fCommentEt.getText().toString()
         );
     }
 
     /**
      * This method was used for sending the edited expenses back to the activity that called it.
-     * @param newExpense
+     * @param newExpense The expense object that is being sent back to the previous activity
      */
     private void sendResult(Expense newExpense) {
         Bundle result = BaseActivity.bundleExpense(newExpense, ARG_FRAG_BUNDLE_KEY);

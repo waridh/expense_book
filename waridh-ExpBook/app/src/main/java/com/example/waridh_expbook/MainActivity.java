@@ -73,7 +73,6 @@ public class MainActivity extends BaseActivity {
      */
     public void addEntryButtonFc(View view) {
         deactivateDeleteMode();
-//        openNewEntryForResult();
         displayFragment(EditEntryFragment.OpMode.ADD, "add_entry");
     }
 
