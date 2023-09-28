@@ -15,20 +15,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class EditEntryFragment extends DialogFragment {
+import java.util.Objects;
 
+public class EditEntryFragment extends DialogFragment {
     enum OpMode {
         EDIT,
         ADD
     }
 
+    enum EEFOptions {
+        SOME,
+        NONE
+    }
+
     // the fragment initialization parameters
     private static final String ARG_EXPENSE = "lfdksfs&@j@!(*&";
     private static final String ARG_OP_MODE = "ihu212 kjh1401 =@!#!U)";
+    private static final String ARG_EXISTANCE_CHECK = "ej2e1e 90( @E09)E@Q) (";
 
     /* Key for accessing the bundle from the fragment */
     public static final String ARG_FRAG_BUNDLE_KEY = "j312i&da";
-    public static final String ARG_REQUEST_KEY = "j21k3j0s*A213A(*";
+    public static final String ARG_DETAIL_REQUEST_KEY = "j21k3j0s*A213A(*";
+    public static final String ARG_MAIN_REQUEST_KEY = "oi ji2dasi 0fdal0@!( ))ODSOQK) ";
 
     // These are the instance variables
     private String fName,fMonthStarted,fMonthlyExpense,fComment, fragmentHeaderS;
@@ -37,6 +45,7 @@ public class EditEntryFragment extends DialogFragment {
     private EditText fNameEt, fMonthStartedEt, fMonthlyExpenseEt, fCommentEt;
     private TextView fragmentHeaderTv;
 
+    /* Storage of the mode of operation for the fragment */
     private OpMode operationMode;
 
     public EditEntryFragment() {
@@ -60,6 +69,25 @@ public class EditEntryFragment extends DialogFragment {
         /* Bundling the arguments that is required to open up the fragment */
         args.putSerializable(ARG_EXPENSE, argExpense);
         args.putSerializable(ARG_OP_MODE, operationMode);
+        args.putSerializable(ARG_EXISTANCE_CHECK, EEFOptions.SOME);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    /**
+     * Factory method for creation of the object
+     * @param operationMode The mode of operation. Supports ADD and EDIT mode.
+     * @return The generated EditEntryFragment instance
+     */
+    public static EditEntryFragment newInstance(
+            OpMode operationMode
+    ) {
+        EditEntryFragment fragment = new EditEntryFragment();
+        Bundle args = new Bundle();
+
+        args.putSerializable(ARG_OP_MODE, operationMode);
+        args.putSerializable(ARG_EXISTANCE_CHECK, EEFOptions.NONE);
         fragment.setArguments(args);
 
         return fragment;
@@ -74,20 +102,29 @@ public class EditEntryFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // Running the inherited
         if (getArguments() != null) {   // Argument safety-check
-            Expense argExpense = (Expense) requireArguments().getSerializable(ARG_EXPENSE);
+            Expense argExpense;
             operationMode = (OpMode) requireArguments().getSerializable(ARG_OP_MODE);
+            EEFOptions option = (EEFOptions) requireArguments().getSerializable(
+                    ARG_EXISTANCE_CHECK);
+            switch(Objects.requireNonNull(option)) {
+                case SOME:
+                    argExpense = (Expense) getArguments().getSerializable(ARG_EXPENSE);
+                    fName = argExpense.getName();
+                    fMonthStarted = argExpense.getMonthStarted();
+                    fMonthlyExpense = argExpense.getMonthlyCharge();
+                    /* Comment existence check. */
+                    if (argExpense.getCommentFlag()) {
+                        fComment = argExpense.getComment();
+                    }
+                    break;
+                case NONE:
+                    argExpense = null;
+                    break;
+                default:
+            }
             switch(operationMode) {
                 case EDIT:
                     fragmentHeaderS = "Edit entry";
-                    if (argExpense != null) {   // Intellisense was not having it when I did not have this.
-                        fName = argExpense.getName();
-                        fMonthStarted = argExpense.getMonthStarted();
-                        fMonthlyExpense = argExpense.getMonthlyCharge();
-                        /* Comment existence check. */
-                        if (argExpense.getCommentFlag()) {
-                            fComment = argExpense.getComment();
-                        }
-                    }
                     break;
                 case ADD:
                     fragmentHeaderS = "Add entry";
@@ -203,7 +240,6 @@ public class EditEntryFragment extends DialogFragment {
     }
 
     private void applyFilters() {
-
         // Creating the input filter for the edit texts
         InputFilter blockSpecChar = new InputFilter() {
             @Override
@@ -231,9 +267,8 @@ public class EditEntryFragment extends DialogFragment {
     }
 
     private boolean checkFields() {
-        return NewEntryActivity.checkFields(
-                this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt
-        );
+        return BaseActivity.checkFields(
+                this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt);
     }
 
     private Expense acceptUserInput() {
@@ -266,6 +301,15 @@ public class EditEntryFragment extends DialogFragment {
      */
     private void sendResult(Expense newExpense) {
         Bundle result = BaseActivity.bundleExpense(newExpense, ARG_FRAG_BUNDLE_KEY);
-        getParentFragmentManager().setFragmentResult(ARG_REQUEST_KEY, result);
+
+        /* Need to choose the activity that we are sending the result to */
+        switch(operationMode) {
+            case EDIT:
+                getParentFragmentManager().setFragmentResult(ARG_DETAIL_REQUEST_KEY, result);
+                break;
+            case ADD:
+                getParentFragmentManager().setFragmentResult(ARG_MAIN_REQUEST_KEY, result);
+                break;
+        }
     }
 }

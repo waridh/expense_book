@@ -1,7 +1,6 @@
 package com.example.waridh_expbook;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -69,7 +68,7 @@ public class DetailedExpenseActivity extends SubActivity {
      */
     private void setupFragmentResultListener() {
         getSupportFragmentManager().setFragmentResultListener(
-                EditEntryFragment.ARG_REQUEST_KEY,
+                EditEntryFragment.ARG_DETAIL_REQUEST_KEY,
                 this,
                 new FragmentResultListener() {
                     @Override
@@ -127,10 +126,10 @@ public class DetailedExpenseActivity extends SubActivity {
 
     private void setDetailedTextViews() {
         monthlyChargeDtv.setText(theExpense.getMonthlyChargeNice());
-        monthStartedDtv.setText(monthStartedS);
-        nameDtv.setText(nameS);
+        monthStartedDtv.setText(theExpense.getMonthStarted());
+        nameDtv.setText(theExpense.getName());
         /* Need to check if there are comments or not */
-        setCommentDetailedTextView(commentS);
+        if (theExpense.getCommentFlag()) setCommentDetailedTextView(theExpense.getComment());
     }
 
     /**
@@ -145,41 +144,17 @@ public class DetailedExpenseActivity extends SubActivity {
         else commentDv.setVisibility(View.GONE);    // The view does not need to show up
     }
 
-    private EditEntryFragment newEntryFragment() {
-        if (commentState) return EditEntryFragment.newInstance(
-                new Expense(
-                        nameS, monthStartedS, monthlyChargeS, commentS),
-                EditEntryFragment.OpMode.EDIT);
-        else return EditEntryFragment.newInstance(
-                new Expense(nameS, monthStartedS, monthlyChargeS),
-                EditEntryFragment.OpMode.EDIT);
-    }
-
     /**
      * This method opens the edit value fragment.
-     * @param view
+     * @param view is a requirement for linking a button to a method through xml
      */
     public void editButtonFc(View view) {
-        displayFragment();
+        displayFragment(theExpense, EditEntryFragment.OpMode.EDIT, "edit_details");
     }
 
     public void deleteButtonFc(View view) {
         deleteExpense();
         finish();
-    }
-
-    /**
-     * This method will display the fragment
-     */
-    public void displayFragment() {
-        EditEntryFragment eeFragment = newEntryFragment();
-
-        /* Beginning fragment transaction */
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        eeFragment.show(fragmentManager, "edit_details");
-
-        /* Artifact from this operation */
-        this.fragmentState = true;
     }
 
     @Override

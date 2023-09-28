@@ -1,7 +1,7 @@
 package com.example.waridh_expbook;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentResultListener;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -52,6 +52,7 @@ public class MainActivity extends BaseActivity {
 
         this.expenseListView.setAdapter(this.expenseAdapter);
         this.expenseListView.setOnItemClickListener(expenseListClick);
+        setupFragmentResultListener();
     }
 
     /**
@@ -72,7 +73,8 @@ public class MainActivity extends BaseActivity {
      */
     public void addEntryButtonFc(View view) {
         deactivateDeleteMode();
-        openNewEntryForResult();
+//        openNewEntryForResult();
+        displayFragment(EditEntryFragment.OpMode.ADD, "add_entry");
     }
 
     /**
@@ -81,26 +83,6 @@ public class MainActivity extends BaseActivity {
      */
     public void deleteEntryButtonFc(View view) {
         toggleDeleteMode();
-    }
-
-    /**
-     * This method launches the new entry activity, and then also does handling for the returned
-     * result.
-     */
-    private void openNewEntryForResult() {
-        Intent intent = new Intent(this, NewEntryActivity.class);
-        activityLauncher.launch(intent, result -> {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-
-                /* Taking the input and updating the ExpenseList */
-                expenseAdapter.add(
-                        extractExpense(
-                                result.getData() != null ? result.getData() : null,
-                                ARG_RETURNED_EXPENSE
-                        )
-                );
-            }
-        });
     }
 
     /**
@@ -121,6 +103,7 @@ public class MainActivity extends BaseActivity {
             if (result.getResultCode() == Activity.RESULT_OK) {
                 /* This code means that the entry was updated. */
                 if (result.getData() != null) {
+                    /* Deleting the expense or updating it? */
                     if (result.getData().getExtras().getByte(ARG_EXPENSE_LIST_COMMAND) == DEAD_CODE) {
                         expenseAdapter.remove(index);
                     }
@@ -150,6 +133,27 @@ public class MainActivity extends BaseActivity {
     private void activateDeleteMode() {
         deleteMode = true;
         setDeleteModeUI();
+    }
+
+    /**
+     * This method installs the fragment result listener, meaning that when the fragment sends
+     * anything, this activity will process it immediately. Updated the current expense and package
+     * it for the main location.
+     */
+    private void setupFragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(
+            EditEntryFragment.ARG_MAIN_REQUEST_KEY,
+            this,
+            new FragmentResultListener() {
+                @Override
+                public void onFragmentResult(
+                        @NonNull String requestKey, @NonNull Bundle bundle
+                ) {
+                    // Unwrapping expense from a fragment package
+                    Expense theExpense = extractExpense(
+                            bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
+                    expenseAdapter.add(theExpense); // Adding the returned expense to the list
+                }});
     }
 
     /**

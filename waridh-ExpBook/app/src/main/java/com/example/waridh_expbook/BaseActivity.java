@@ -7,6 +7,7 @@ import android.widget.EditText;
 
 import androidx.activity.result.ActivityResult;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import java.util.Objects;
 
@@ -102,5 +103,25 @@ public abstract class BaseActivity extends AppCompatActivity {
             returnValue = false;
         } else returnValue = returnValue;
         return returnValue;
+    }
+
+    protected void displayFragment(
+            Expense entry, EditEntryFragment.OpMode operationMode, String tag) {
+        EditEntryFragment eeFragment = EditEntryFragment.newInstance(
+                entry, operationMode
+        );
+
+        /* Beginning fragment transaction */
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        eeFragment.show(fragmentManager, tag);
+    }
+
+    protected void displayFragment(EditEntryFragment.OpMode operationMode, String tag) {
+        EditEntryFragment eeFragment = EditEntryFragment.newInstance(
+                operationMode);
+
+        /* Beginning fragment transaction */
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        eeFragment.show(fragmentManager, tag);
     }
 }
