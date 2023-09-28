@@ -1,12 +1,13 @@
 package com.example.waridh_expbook;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Expense implements Serializable {
     private String name;
     private String monthStarted;
-    private String monthlyCharge;
+    private float monthlyCharge;
 
     /* Comment check. Relying on the Null value might result in bugs later, so I
     * will be using a flag. */
@@ -25,7 +26,7 @@ public class Expense implements Serializable {
         this.commentFlag = false;
         this.name = name;
         this.monthStarted = monthStarted;
-        this.monthlyCharge = charge;
+        setMonthlyCharge(charge);
     }
 
     /**
@@ -34,7 +35,7 @@ public class Expense implements Serializable {
     public Expense(String name, String monthStarted, String charge, String comment) {
         this.name = name;
         this.monthStarted = monthStarted;
-        this.monthlyCharge = charge;
+        setMonthlyCharge(charge);
         this.commentFlag = true;
         this.comment = comment;
     }
@@ -45,11 +46,12 @@ public class Expense implements Serializable {
      * completed.
      * @return An Expense object constructed with or without the comment field.
      */
-    public static Expense createNewExpense(
+    public static Expense newInstance(
             String nameText,
             String monthStartedText,
             String chargeText,
-            String commentText) {
+            String commentText
+            ) {
         Expense retExpense; // Declaration of the output
         if (commentCheck(commentText)) {
             retExpense = new Expense(nameText, monthStartedText, chargeText, commentText);
@@ -60,13 +62,41 @@ public class Expense implements Serializable {
     }
 
     /**
+     * Return a string that capitalizes only the first letter of s. So for example,
+     * cat becomes Cat.
+     * A design decision that was made here was that if the input string has
+     * surrounding whitespaces, those will be trimmed. A second design decision
+     * is that an capitalized permutation will get turned into regular english
+     * capitalized. For example 'aNGrY' input will result in 'Angry' output.
+     *
+     * @return {@code s2} which is the same string as s, but in regular
+     * capitalization, and the the surrounding white space trimmed.
+     */
+    public String capitalizeFirst(String s) {
+        String s2 = s.trim();	// Done for better tokenization.
+
+        if (s2 == null || s2.length() == 0) return s;
+        else {
+            return s2.substring(0, 1).toUpperCase() + s2.substring(1).toLowerCase();
+        }
+    }
+
+    /**
      * Getter for the month started. Since string, a new object does not need to be created due to
      * immutability.
      * @return the string representing the month started.
      */
     public String getMonthStarted() { return monthStarted; }
 
-    public String getMonthlyCharge() { return monthlyCharge; }
+    /**
+     * Returns the monthly charge
+     * @return Returns the monthly charge in String.
+     */
+    public String getMonthlyCharge() {
+        return String.format("%6.2f", monthlyCharge); }
+
+    public String getMonthlyChargeNice() {
+        return String.format("$%6.2f", monthlyCharge); }
 
     /**
      * This method returns the comment that is stored in this expense entry. If it doesn't exist
@@ -97,6 +127,18 @@ public class Expense implements Serializable {
         return (name.length() <= 15 && name.length() > 0);
     }
 
+    public static float moneyParse(String money) {
+        final Pattern p = Pattern.compile("[0-9]*\\\\.[0-9]*");
+        Matcher m = p.matcher(money);
+        if (m.find()) {
+            return Float.parseFloat(m.group(0));
+        } else return 0;
+    }
+
+    private void setMonthlyCharge(String money) {
+        this.monthlyCharge = Float.parseFloat(money);
+    }
+
     /**
      * This is the character length check for the comments.
      * @param comment The comment under check
@@ -104,7 +146,7 @@ public class Expense implements Serializable {
      */
     public static boolean commentCheck(String comment) {
         if (comment == null) return false;
-        else return comment.length() <= 20 && !comment.trim().isEmpty();
+        else return comment.length() <= 20 && !(comment.trim().isEmpty());
     }
 
     /**
@@ -145,19 +187,11 @@ public class Expense implements Serializable {
         else return false;
     }
 
+    /**
+     * This method returns the name
+     * @return the name of the expense as a string
+     */
     public String getName() {
         return this.name;
-    }
-
-    public void setComment(String s) {
-        this.commentFlag = true;    // The comment flag is not true since we are getting new comment
-    }
-
-    /**
-     * This method will delete the comment that is attached to the expense.
-     */
-    public void deleteComment() {
-        this.commentFlag = false;
-        this.comment = null;
     }
 }

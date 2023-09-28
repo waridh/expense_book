@@ -11,4 +11,9 @@
     <string name="month_started_header">Month Started</string>
     <string name="comment_hint">Comment (optional)</string>
     <string name="cancel_button">Cancel</string>
+    <string name="delete_expense_button_text">Delete Expense</string>
+
+    <string name="delete_mode_header">Delete Mode</string>
+    <string name="delete_mode_sub_header">Tap item to delete</string>
+    <string name="delete_mode_delete_button">Cancel</string>
 </resources>

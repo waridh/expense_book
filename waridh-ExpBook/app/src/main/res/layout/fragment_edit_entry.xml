@@ -10,6 +10,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:id="@+id/fragment_header_tv"
+            android:layout_gravity="center_horizontal"
+            android:textSize="20sp"
+            />
 
         <LinearLayout
             android:id="@+id/name_view_layout"

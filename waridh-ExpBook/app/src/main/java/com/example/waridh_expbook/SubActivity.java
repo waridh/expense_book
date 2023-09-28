@@ -35,4 +35,10 @@ public abstract class SubActivity extends BaseActivity {
         finish();
     }
 
+    protected void sendResultToMain(Bundle bundle) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtras(bundle);
+        setResult(Activity.RESULT_OK, resultIntent);
+    }
+
 }

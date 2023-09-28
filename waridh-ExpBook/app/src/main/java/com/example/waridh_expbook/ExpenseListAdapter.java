@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 public class ExpenseListAdapter extends BaseAdapter {
     Context context;
     ExpenseList expenses;   // Points to the same expense list on the heap as the activity.
@@ -78,8 +80,37 @@ public class ExpenseListAdapter extends BaseAdapter {
         /* Setting the text of the list */
         monthStartedText.setText(this.expenses.getMonthStarted(position));
         expenseName.setText(this.expenses.getName(position));
-        monthlyCost.setText(this.expenses.getMonthlyCharge(position));
+        monthlyCost.setText(this.expenses.getMonthlyChargeNice(position));
 
         return view;
+    }
+
+    /**
+     * This method will remove the entry at the specified index, and then update the adapter
+     * @param index The index of the list that is being removed
+     */
+    public void remove(int index) {
+        this.expenses.remove(index);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Method for adding a new expense item and then updating the adapter
+     * @param newEntry The new Expense entry
+     */
+    public void add(Expense newEntry) {
+        if (newEntry != null) expenses.add(newEntry);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * This method will update the ExpenseList with the new expense, which will likely be generated
+     * from the detailed expense view.
+     * @param index The index of the expense that is being updated
+     * @param editedEntry The new expense that is replacing that edited expense.
+     */
+    public void set(int index, @NonNull Expense editedEntry) {
+        expenses.set(index, editedEntry);
+        notifyDataSetChanged();
     }
 }

@@ -1,7 +1,6 @@
 package com.example.waridh_expbook;
 
 import android.app.Activity;
-import android.app.AppComponentFactory;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,18 +8,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
-import androidx.fragment.app.FragmentTransaction;
 
 public class DetailedExpenseActivity extends SubActivity {
 
-    private Intent inIntent;
-
     /* Expense details */
-    private Expense inExpense;
-    private Expense editedExpense;
+    private Expense theExpense;
     private String monthlyChargeS, monthStartedS, nameS, commentS;
     private boolean commentState;
 
@@ -50,11 +44,10 @@ public class DetailedExpenseActivity extends SubActivity {
         this.editedState = false;
 
         /* Getting the contents of the intent */
-        this.inIntent = this.getIntent();
-        this.inExpense = extractExpense(this.inIntent, ARG_DETAILED_EXPENSE);
+        this.theExpense = extractExpense(this.getIntent(), ARG_DETAILED_EXPENSE);
         fragmentState = false;  // The fragment should not be showing immediately when you open
 
-        loadDetails(inExpense);  // Loading the data from the Expense object
+        loadDetails(theExpense);  // Loading the data from the Expense object
 
         /* Linking the UI elements to objects */
         monthlyChargeDtv = findViewById(R.id.monthly_charge_dtv);
@@ -84,18 +77,38 @@ public class DetailedExpenseActivity extends SubActivity {
                             @NonNull String requestKey, @NonNull Bundle bundle
                     ) {
                         // Going to mostly be unwrapping a bundle
-                        editedExpense = extractExpense(
+                        theExpense = extractExpense(
                                 bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
-                        updateExpenseDetails(editedExpense);
-                        // TODO: Need to send the data back to the main activity
+
+                        /* Loading the expense object into the activity */
+                        loadDetails(theExpense);
+                        setDetailedTextViews();
+
+                        /* Updating the expense in the main activity */
+                        sendExpenseToMainAux(theExpense, LIFE_CODE);
                         fragmentState = false;  // Flipping the state off.
                     }
                 });
     }
 
-    private void updateExpenseDetails(Expense expense) {
-        loadDetails(expense);
-        setDetailedTextViews();
+    /**
+     * This method sends the notification that the row has been deleted to the main activity.
+     */
+    private void deleteExpense() {
+        /* Sending the data back into the main method */
+        sendExpenseToMainAux(new Expense(), DEAD_CODE);
+    }
+
+    /**
+     * More general function for sending the expense back to the main
+     * @param expense The expense object that is replacing the old object
+     * @param liveStatus If this object is deleted or not
+     */
+    private void sendExpenseToMainAux(Expense expense, byte liveStatus) {
+        Bundle bundle = bundleExpense(expense, ARG_RETURNED_EXPENSE);
+        bundle.putByte(ARG_EXPENSE_LIST_COMMAND, liveStatus);
+        sendResultToMain(bundle);
+        editedState = true;
     }
 
     /**
@@ -107,24 +120,17 @@ public class DetailedExpenseActivity extends SubActivity {
         monthStartedS = expense.getMonthStarted();
         monthlyChargeS = expense.getMonthlyCharge();
         commentState = expense.getCommentFlag();
-        loadComment(expense);
+        /* Loads the comment only if there is a comment */
+        if (expense.getCommentFlag()) commentS = expense.getComment();
+        else commentS = null;
     }
 
     private void setDetailedTextViews() {
-        monthlyChargeDtv.setText(monthlyChargeS);
+        monthlyChargeDtv.setText(theExpense.getMonthlyChargeNice());
         monthStartedDtv.setText(monthStartedS);
         nameDtv.setText(nameS);
         /* Need to check if there are comments or not */
         setCommentDetailedTextView(commentS);
-    }
-
-    private void setDetailedTextViews(
-            String name, String monthlyCharge, String monthStarted, String comment) {
-        monthlyChargeDtv.setText(monthlyCharge);
-        monthStartedDtv.setText(monthStarted);
-        nameDtv.setText(name);
-        /* Need to check if there are comments or not */
-        setCommentDetailedTextView(comment);
     }
 
     /**
@@ -132,21 +138,21 @@ public class DetailedExpenseActivity extends SubActivity {
      * it will set the text.
      */
     private void setCommentDetailedTextView(String comment) {
-        if (Expense.commentCheck(comment)) commentDtv.setText(comment);
+        if (Expense.commentCheck(comment)) {
+            commentDv.setVisibility(View.VISIBLE);
+            commentDtv.setText(comment);
+        }
         else commentDv.setVisibility(View.GONE);    // The view does not need to show up
     }
 
-    /**
-     * This method loads the comment if it exists, else it will be set to null
-     */
-    private void loadComment(Expense expense) {
-        if (expense.getCommentFlag()) commentS = expense.getComment();
-        else commentS = null;
-    }
-
     private EditEntryFragment newEntryFragment() {
-        if (commentState) return EditEntryFragment.newInstance(nameS, monthStartedS, monthlyChargeS, commentS);
-        else return EditEntryFragment.newInstance(nameS, monthStartedS, monthlyChargeS);
+        if (commentState) return EditEntryFragment.newInstance(
+                new Expense(
+                        nameS, monthStartedS, monthlyChargeS, commentS),
+                EditEntryFragment.OpMode.EDIT);
+        else return EditEntryFragment.newInstance(
+                new Expense(nameS, monthStartedS, monthlyChargeS),
+                EditEntryFragment.OpMode.EDIT);
     }
 
     /**
@@ -155,6 +161,11 @@ public class DetailedExpenseActivity extends SubActivity {
      */
     public void editButtonFc(View view) {
         displayFragment();
+    }
+
+    public void deleteButtonFc(View view) {
+        deleteExpense();
+        finish();
     }
 
     /**
@@ -171,11 +182,10 @@ public class DetailedExpenseActivity extends SubActivity {
         this.fragmentState = true;
     }
 
-    // TODO: Need to have different returns for when there is and isn't an edit made
     @Override
     public void returnToMain(View view) {
         if (editedState) {
-            // TODO: Finalize how the edited expense is stored.
+            finish();
         } else {    // User did not make a change
             setResult(Activity.RESULT_CANCELED); finish();
         }

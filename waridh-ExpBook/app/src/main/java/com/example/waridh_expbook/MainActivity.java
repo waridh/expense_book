@@ -1,5 +1,6 @@
 package com.example.waridh_expbook;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -7,19 +8,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends BaseActivity {
 
     /* Data structure for storing the expenses entries */
     private ExpenseList entries;
 
-    /* View objects that are needed for user interactions */
+    /* UI elements */
     private ListView expenseListView;
+    private Button mainDeleteB;
+    private TextView appTitle, tableHeader;
 
     /* The view adapters */
     private ExpenseListAdapter expenseAdapter;
 
+    /* Activity state control */
+    private boolean deleteMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +34,13 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         this.entries = new ExpenseList();   // Instantiating the data structure
+
+        /* Linking UI elements */
         this.expenseListView = findViewById(R.id.expense_list);
+        this.mainDeleteB = findViewById(R.id.main_delete_button);
+        this.appTitle = findViewById(R.id.app_title);
+        this.tableHeader = findViewById(R.id.table_header);
+        setDefaultModeUI();
 
         /* This is some debugging entries TODO: Delete these.*/
         this.entries.add(new Expense("Bach", "2000-05", "100.00"));
@@ -42,24 +55,32 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * Anonymous class for when the user clicks on a list item.
+     * Anonymous class for when the user clicks on a list item. We don't expect this value to change
      */
-    private AdapterView.OnItemClickListener expenseListClick = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener expenseListClick =
+            new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            /* TODO: Put in the code that will open up the detailed view of the expense */
-            openEntryDetails(position);
+            if (deleteMode) expenseAdapter.remove(position);
+            else openEntryDetailsForResult(position);    // This method opens the detailed view
         }
     };
 
+    /**
+     * This method is called when the add entry button has been clicked.
+     * @param view Required parameter for xml onClick calls.
+     */
     public void addEntryButtonFc(View view) {
-        /**
-         * This method will open up the view where the user can input a new expense entry.
-         * @param View view - view
-         */
-//        Intent intent = new Intent(this, NewEntryActivity.class);
-//        startActivity(intent );
+        deactivateDeleteMode();
         openNewEntryForResult();
+    }
+
+    /**
+     * This method is called when the add entry button has been clicked.
+     * @param view Required parameter for xml onClick calls.
+     */
+    public void deleteEntryButtonFc(View view) {
+        toggleDeleteMode();
     }
 
     /**
@@ -72,7 +93,7 @@ public class MainActivity extends BaseActivity {
             if (result.getResultCode() == Activity.RESULT_OK) {
 
                 /* Taking the input and updating the ExpenseList */
-                updateExpenseList(
+                expenseAdapter.add(
                         extractExpense(
                                 result.getData() != null ? result.getData() : null,
                                 ARG_RETURNED_EXPENSE
@@ -83,24 +104,77 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * This method updates the ExpenseList by added the new
-     * @param newEntry
+     * This method will open the details page for the expense. What it will also do is accept any
+     * changes that that user made in the details page.
+     * @param index This is the index on the list view that the expense being viewed is.
      */
-    private void updateExpenseList(Expense newEntry) {
-        if (newEntry != null) this.entries.add(newEntry);
-        this.expenseAdapter.notifyDataSetChanged();
-    }
-
-    /**
-     * This method is used to open up the detailed view of an entry.
-     */
-    public void openEntryDetails(int index) {
+    private void openEntryDetailsForResult(int index) {
+        /* Getting the expense data */
         Bundle bundle = bundleExpense(this.entries.get(index), ARG_DETAILED_EXPENSE);
 
-        /* Packaging the bundle into the intent */
+        /* Setting up the intent */
         Intent intent = new Intent(this, DetailedExpenseActivity.class);
         intent.putExtras(bundle);
 
-        startActivity(intent);
+        /* Launching the activity for result */
+        activityLauncher.launch(intent, result -> {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                /* This code means that the entry was updated. */
+                if (result.getData() != null) {
+                    if (result.getData().getExtras().getByte(ARG_EXPENSE_LIST_COMMAND) == DEAD_CODE) {
+                        expenseAdapter.remove(index);
+                    }
+                    else expenseAdapter.set(
+                        index,
+                        extractExpense(
+                                result.getData(),
+                                ARG_RETURNED_EXPENSE)
+                    );
+                }
+            }
+        });
+    }
+
+    /**
+     * Method to toggle delete mode in case the user wants to mass delete the stuff in the main
+     * activity.
+     */
+    private void toggleDeleteMode() {
+        if (deleteMode) deactivateDeleteMode();
+        else            activateDeleteMode();
+    }
+
+    /**
+     * Turns on the delete mode, which changes the UI, and turns on the delete mode flag.
+     */
+    private void activateDeleteMode() {
+        deleteMode = true;
+        setDeleteModeUI();
+    }
+
+    /**
+     * Turns off the delete mode flag and then restores the default UI.
+     */
+    private void deactivateDeleteMode() {
+        deleteMode = false;
+        setDefaultModeUI();
+    }
+
+    /**
+     * Sets the texts on the UI to be the default values for non-delete usage.
+     */
+    private void setDefaultModeUI() {
+        this.appTitle.setText(getString(R.string.header_text));
+        this.tableHeader.setText("Name Date Price");
+        this.mainDeleteB.setText(getString(R.string.delete_expense_button_text));
+    }
+
+    /**
+     * Sets the texts on the UI to guide users to do delete mode.
+     */
+    private void setDeleteModeUI() {
+        this.appTitle.setText(getString(R.string.delete_mode_header));
+        this.tableHeader.setText(getString(R.string.delete_mode_sub_header));
+        this.mainDeleteB.setText(getString(R.string.delete_mode_delete_button));
     }
 }

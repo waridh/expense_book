@@ -1,7 +1,6 @@
 package com.example.waridh_expbook;
 
 import android.app.AppComponentFactory;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -10,8 +9,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * This is the class for the user adding a new activity. The goal is to send a new object of the
@@ -119,67 +116,13 @@ public class NewEntryActivity extends SubActivity {
     }
 
     /**
-     * This method will only return true when all the required user input constraints are met.
-     * The nameEt must be 15 characters or less
-     * The month started must be in the format of yyyy-mm, we check for valid month, but not year
-     * The monthly charge has to be a positive canadian dollar value. Enforces that the field is not
-     * empty.
-     * @param nameEt The name field edit text box. Just need to check character length limit.
-     * @param monthStartedEt The month started has length check and valid month check.
-     * @param monthlyChargeEt
-     * @return
-     */
-    public static boolean checkFields(
-            EditText nameEt, EditText monthStartedEt, EditText monthlyChargeEt) {
-        boolean returnValue = true;
-        String nameS, monthStartedS;
-        /* This is the check to make sure that the name field is not empty */
-        nameS = nameEt.getText().toString().trim();
-        if (isBlank(nameEt)) {
-            nameEt.setError("This field is required");
-            returnValue = false;
-        } else if (nameS.length() > 15) {
-            nameEt.setError("Over the character limit of 15");
-            returnValue = false;
-        }
-        else returnValue = returnValue;
-
-        /* Checking the month started formatting */
-        monthStartedS = monthStartedEt.getText().toString().trim();
-        if (monthStartedS.isEmpty()) {
-            monthStartedEt.setError("This field is required");
-            returnValue = false;
-        }
-        else if (
-                !Expense.monthStartedCheck(
-                        monthStartedS
-                )) {
-            monthStartedEt.setError(
-                    "The input date is not valid. Please enter a real date.");
-            returnValue = false;
-        }
-        else returnValue = returnValue;
-
-        /* Dealing with the money input value. No need to degit test since that is UI locked */
-        if (isBlank(monthlyChargeEt)) {
-            monthlyChargeEt.setError("This field is required");
-            returnValue = false;
-        } else returnValue = returnValue;
-        return returnValue;
-    }
-
-    public static boolean isBlank(EditText et) {
-        return et.getText().toString().trim().isEmpty();
-    }
-
-    /**
      * This method gets called when the user clicks on the add entry button. It has to do field
      * checks, and after doing so, determines if the data can be sent back to the main activity.
      */
     public void addEntry(View view) {
         if (checkFields()) {
             /* This is a placeholder. I think we are going to try to use finish instead of this */
-            Expense newEntry = Expense.createNewExpense(
+            Expense newEntry = Expense.newInstance(
                     this.nameEdit.getText().toString(),
                     this.monthStartedEdit.getText().toString(),
                     this.moneyEdit.getText().toString(),

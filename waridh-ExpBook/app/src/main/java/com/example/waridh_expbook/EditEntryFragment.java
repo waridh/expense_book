@@ -4,37 +4,40 @@ import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class EditEntryFragment extends DialogFragment {
 
+    enum OpMode {
+        EDIT,
+        ADD
+    }
+
     // the fragment initialization parameters
-    private static final String ARG_NAME = "param1";
-    private static final String ARG_MONTH_STARTED = "param2";
-    private static final String ARG_MONTHLY_CHARGE = "param3";
-    private static final String ARG_COMMENT = "param4";
-    private static final String ARG_COMMENT_CHECK = "param5";
+    private static final String ARG_EXPENSE = "lfdksfs&@j@!(*&";
+    private static final String ARG_OP_MODE = "ihu212 kjh1401 =@!#!U)";
 
     /* Key for accessing the bundle from the fragment */
     public static final String ARG_FRAG_BUNDLE_KEY = "j312i&da";
     public static final String ARG_REQUEST_KEY = "j21k3j0s*A213A(*";
 
-    /* Fragment edit */
-    private int margin;
-
     // These are the instance variables
-    private String fName,fMonthStarted,fMonthlyExpense,fComment;
-    private boolean fCommentFlag;
+    private String fName,fMonthStarted,fMonthlyExpense,fComment, fragmentHeaderS;
 
     /* These are UI elements */
     private EditText fNameEt, fMonthStartedEt, fMonthlyExpenseEt, fCommentEt;
-    private Button fCancelB, fSubmitB;
+    private TextView fragmentHeaderTv;
+
+    private OpMode operationMode;
 
     public EditEntryFragment() {
         // Required empty public constructor
@@ -44,65 +47,52 @@ public class EditEntryFragment extends DialogFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param name The name of the expense in string form
-     * @param monthStarted The month started with the format of yyyy-mm in string form.
-     * @param monthlyCharge The monthly charge in string form
+     * @param argExpense This is the expense that is being sent into the fragment
      * @return A new instance of fragment EditEntryFragment.
      */
     public static EditEntryFragment newInstance(
-            String name,
-            String monthStarted,
-            String monthlyCharge
-            ) {
-        EditEntryFragment fragment = new EditEntryFragment();
-        Bundle args = new Bundle();
-
-        /* Bundling the arguments that is required to open up the fragment */
-        args.putString(ARG_NAME, name);
-        args.putString(ARG_MONTH_STARTED, monthStarted);
-        args.putString(ARG_MONTHLY_CHARGE, monthlyCharge);
-
-        /* In this case, there is no comment */
-        args.putByte(ARG_COMMENT_CHECK, (byte)0);   // Using byte like a boolean. 0 if no comment
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static EditEntryFragment newInstance(
-            String name,
-            String monthStarted,
-            String monthlyCharge,
-            String comment
+            Expense argExpense,
+            OpMode operationMode
     ) {
         EditEntryFragment fragment = new EditEntryFragment();
         Bundle args = new Bundle();
 
         /* Bundling the arguments that is required to open up the fragment */
-        args.putString(ARG_NAME, name);
-        args.putString(ARG_MONTH_STARTED, monthStarted);
-        args.putString(ARG_MONTHLY_CHARGE, monthlyCharge);
-
-        /* In this case, there is comment */
-        args.putByte(ARG_COMMENT_CHECK, (byte)1);   // Using byte like a boolean. 0 if no comment
-        args.putString(ARG_COMMENT, comment);
-
+        args.putSerializable(ARG_EXPENSE, argExpense);
+        args.putSerializable(ARG_OP_MODE, operationMode);
         fragment.setArguments(args);
+
         return fragment;
     }
 
+    /**
+     * The entrance method.
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            fName = getArguments().getString(ARG_NAME);
-            fMonthStarted = getArguments().getString(ARG_MONTH_STARTED);
-            fMonthlyExpense = getArguments().getString(ARG_MONTHLY_CHARGE);
-            /* Comment existence check. */
-            if (getArguments().getByte(ARG_COMMENT_CHECK) == 0) fCommentFlag = false;
-            else {
-                fCommentFlag = true;
-                fComment = getArguments().getString(ARG_COMMENT);
+        super.onCreate(savedInstanceState); // Running the inherited
+        if (getArguments() != null) {   // Argument safety-check
+            Expense argExpense = (Expense) requireArguments().getSerializable(ARG_EXPENSE);
+            operationMode = (OpMode) requireArguments().getSerializable(ARG_OP_MODE);
+            switch(operationMode) {
+                case EDIT:
+                    fragmentHeaderS = "Edit entry";
+                    if (argExpense != null) {   // Intellisense was not having it when I did not have this.
+                        fName = argExpense.getName();
+                        fMonthStarted = argExpense.getMonthStarted();
+                        fMonthlyExpense = argExpense.getMonthlyCharge();
+                        /* Comment existence check. */
+                        if (argExpense.getCommentFlag()) {
+                            fComment = argExpense.getComment();
+                        }
+                    }
+                    break;
+                case ADD:
+                    fragmentHeaderS = "Add entry";
+                    break;
+                default:
             }
         }
     }
@@ -118,15 +108,42 @@ public class EditEntryFragment extends DialogFragment {
         this.fMonthlyExpenseEt = fView.findViewById(R.id.edit_monthly_expense_et);
         this.fMonthStartedEt = fView.findViewById(R.id.edit_month_started_et);
         this.fCommentEt = fView.findViewById(R.id.edit_comment_et);
-        this.fSubmitB = fView.findViewById(R.id.edit_submit_b);
-        this.fCancelB = fView.findViewById(R.id.edit_cancel_b);
+        fragmentHeaderTv = fView.findViewById(R.id.fragment_header_tv);
+        Button fSubmitB = fView.findViewById(R.id.edit_submit_b);
+        Button fCancelB = fView.findViewById(R.id.edit_cancel_b);
 
         /* Setting up the listeners */
-        this.fCancelB.setOnClickListener(cancelButtonListener);
-        this.fSubmitB.setOnClickListener(submitChangesButtonListener);
+        fCancelB.setOnClickListener(cancelButtonListener);
+        fSubmitB.setOnClickListener(submitChangesButtonListener);
 
         /* Order matters here. We are setting the values in the edit text box */
         setTextBoxes();
+
+        /* Automatically putting in the hyphen when the user is putting in the month started */
+        this.fMonthStartedEt.addTextChangedListener(
+                new TextWatcher() {
+                    int first = 0;
+                    int second;
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        second = first;
+                        first = s.length();
+
+                        if (fMonthStartedEt.length() == 4 && first > second) {
+                            fMonthStartedEt.append("-");
+                        }
+                    }
+                }
+        );
 
         /* The following methods are for setting constraints on the edit texts */
         applyFilters();
@@ -156,7 +173,10 @@ public class EditEntryFragment extends DialogFragment {
          */
         @Override
         public void onClick(View v) {
-            submitButtonFc();  // This is the best way to close a dialog fragment.
+            if (checkFields()) {
+                sendResult(acceptUserInput());
+                dismiss();
+            }
         }
     };
 
@@ -166,10 +186,20 @@ public class EditEntryFragment extends DialogFragment {
      * linked.
      */
     private void setTextBoxes() {
-        fNameEt.setText(fName);
-        fMonthlyExpenseEt.setText(fMonthlyExpense);
-        fMonthStartedEt.setText(fMonthStarted);
-        if (fCommentFlag) fCommentEt.setText(fComment);
+        switch (operationMode) {
+            case EDIT:
+                fragmentHeaderTv.setText(fragmentHeaderS);
+                fNameEt.setText(fName);
+                fMonthlyExpenseEt.setText(fMonthlyExpense);
+                fMonthStartedEt.setText(fMonthStarted);
+                if (Expense.commentCheck(fComment)) fCommentEt.setText(fComment);
+                break;
+            case ADD:
+                fragmentHeaderTv.setText(fragmentHeaderS);
+                break;
+            default:
+        }
+
     }
 
     private void applyFilters() {
@@ -177,7 +207,7 @@ public class EditEntryFragment extends DialogFragment {
         // Creating the input filter for the edit texts
         InputFilter blockSpecChar = new InputFilter() {
             @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dStart, int dEnd) {
                 final String blockCharacterSet = "./#";
                 if (source != null && blockCharacterSet.contains(("" + source))) {
                     return "";
@@ -189,37 +219,21 @@ public class EditEntryFragment extends DialogFragment {
         this.fMonthlyExpenseEt.setFilters(
                 new InputFilter[] {
                         new DecimalDigitInputFilter(
-                                100, 2
-                        )
-                });
+                                100, 2)});
         this.fMonthStartedEt.setFilters(
                 new InputFilter[] {
-                        blockSpecChar,
-                        new InputFilter.LengthFilter(7)
-                });
+                        blockSpecChar, new InputFilter.LengthFilter(7)});
         this.fCommentEt.setFilters(
                 new InputFilter[] {
-                        new InputFilter.LengthFilter(20)
-                }
-        );
+                        new InputFilter.LengthFilter(20)});
         this.fNameEt.setFilters(
-                new InputFilter[] {
-                        new InputFilter.LengthFilter(15)
-                }
-        );
+                new InputFilter[] {new InputFilter.LengthFilter(15)});
     }
 
     private boolean checkFields() {
         return NewEntryActivity.checkFields(
                 this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt
         );
-    }
-
-    private void submitButtonFc() {
-        if (checkFields()) {
-            sendResult(acceptUserInput());
-            dismiss();
-        }
     }
 
     private Expense acceptUserInput() {
@@ -231,18 +245,25 @@ public class EditEntryFragment extends DialogFragment {
         fMonthStarted = fMonthStartedEt.getText().toString();
         fMonthlyExpense = fMonthlyExpenseEt.getText().toString();
         fComment = fCommentEt.getText().toString();
-        if (Expense.commentCheck(fComment)) fCommentFlag = true;
     }
+
+    /**
+     * This method creates an expense from the data stored in the local scope.
+     * @return A new expense created from the local fragment scope data.
+     */
     private Expense generateExpense() {
-        Expense returnExpense = Expense.createNewExpense(
+        return Expense.newInstance(
                 fName,
                 fMonthStarted,
                 fMonthlyExpense,
                 fComment
         );
-        return returnExpense;
     }
 
+    /**
+     * This method was used for sending the edited expenses back to the activity that called it.
+     * @param newExpense
+     */
     private void sendResult(Expense newExpense) {
         Bundle result = BaseActivity.bundleExpense(newExpense, ARG_FRAG_BUNDLE_KEY);
         getParentFragmentManager().setFragmentResult(ARG_REQUEST_KEY, result);
