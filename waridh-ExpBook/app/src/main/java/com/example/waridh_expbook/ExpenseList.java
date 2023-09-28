@@ -7,12 +7,12 @@ import java.util.ArrayList;
  * the fields of the expense.
  */
 public class ExpenseList {
-    private ArrayList<Expense> expenses;    // This is out internal data structure for all the rows
+    private final ArrayList<Expense> expenses;    // This is out internal data structure for all the rows
 
     /**
-     * The constructor for the object. Initializes the ArrayList.
+     * The constructor for the object. Initializes the ArrayList holding the data.
      */
-    public ExpenseList() {this.expenses = new ArrayList<Expense>();}
+    public ExpenseList() {this.expenses = new ArrayList<>();}
 
     /**
      * Returns the amount of elements being currently stored in ExpenseList.
@@ -22,22 +22,33 @@ public class ExpenseList {
 
     /**
      * The addition of a new row
-     * @param row
+     * @param row is an Expense object that is being appended to the list.
      */
     public void add(Expense row) { this.expenses.add(row);}
 
+    /**
+     * This method retrieves the object from the i (index) parameter that is stored.
+     * @param i is the index that the object is being retrieved from.
+     * @return the Expense object at the index. null is returned if it is not there.
+     */
     public Expense get(int i) {
-        return expenses.get(i);
-    }
+        if (i < expenses.size()) return expenses.get(i);
+        else return null;}
 
-    public String getMonthlyCharge(int index) {
-        return (expenses.get(index)).getMonthlyCharge();
-    }
-
+    /**
+     * This method returns a string that represents the monthly charge of the expense. Has a dollar
+     * sign ($).
+     * @param index The index of the expense being retrieved.
+     * @return The string that represents the value of the monthly charge. In this format $ XX.XX
+     */
     public String getMonthlyChargeNice(int index) {
-        return (expenses.get(index)).getMonthlyChargeNice();
-    }
+        return (expenses.get(index)).getMonthlyChargeNice();}
 
+    /**
+     * This method returns the month started in string format of the entry at the index location
+     * @param index is the index of the entry that is being requested
+     * @return The string of the month started in the yyyy-mm format
+     */
     public String getMonthStarted(int index) {
         return (expenses.get(index)).getMonthStarted();
     }

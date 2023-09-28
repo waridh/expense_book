@@ -1,8 +1,6 @@
 package com.example.waridh_expbook;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Expense implements Serializable {
     private String name;
@@ -11,7 +9,7 @@ public class Expense implements Serializable {
 
     /* Comment check. Relying on the Null value might result in bugs later, so I
     * will be using a flag. */
-    private boolean commentFlag;
+    private final boolean commentFlag;
     private String comment;
 
     /**
@@ -62,26 +60,6 @@ public class Expense implements Serializable {
     }
 
     /**
-     * Return a string that capitalizes only the first letter of s. So for example,
-     * cat becomes Cat.
-     * A design decision that was made here was that if the input string has
-     * surrounding whitespaces, those will be trimmed. A second design decision
-     * is that an capitalized permutation will get turned into regular english
-     * capitalized. For example 'aNGrY' input will result in 'Angry' output.
-     *
-     * @return {@code s2} which is the same string as s, but in regular
-     * capitalization, and the the surrounding white space trimmed.
-     */
-    public String capitalizeFirst(String s) {
-        String s2 = s.trim();	// Done for better tokenization.
-
-        if (s2 == null || s2.length() == 0) return s;
-        else {
-            return s2.substring(0, 1).toUpperCase() + s2.substring(1).toLowerCase();
-        }
-    }
-
-    /**
      * Getter for the month started. Since string, a new object does not need to be created due to
      * immutability.
      * @return the string representing the month started.
@@ -127,14 +105,6 @@ public class Expense implements Serializable {
         return (name.length() <= 15 && name.length() > 0);
     }
 
-    public static float moneyParse(String money) {
-        final Pattern p = Pattern.compile("[0-9]*\\\\.[0-9]*");
-        Matcher m = p.matcher(money);
-        if (m.find()) {
-            return Float.parseFloat(m.group(0));
-        } else return 0;
-    }
-
     private void setMonthlyCharge(String money) {
         this.monthlyCharge = Float.parseFloat(money);
     }
@@ -161,15 +131,14 @@ public class Expense implements Serializable {
             year = Integer.parseInt(tokenized[0]);
             month = Integer.parseInt(tokenized[1]);
             /* This blocks out invalid months and years. */
-            if ((0 < month && month < 13) && (0 < year)) return true;
-            else return false;
+            return (0 < month && month < 13) && (0 < year);
         }
         else return false;
     }
 
     /**
      * This method will check if the monthly expense is correct
-     * @return
+     * @return returns true when the monthlyChargeInput matches the constraint
      */
     public static boolean monthlyChargeCheck(String charge) {
         /* regex for checking if the user input is a number. */
@@ -181,8 +150,7 @@ public class Expense implements Serializable {
             float value;
             value = Float.parseFloat(charge);
             /* This blocks out invalid months and years. */
-            if (0.0 <= value) return true;
-            else return false;
+            return 0.0 <= value;
         }
         else return false;
     }

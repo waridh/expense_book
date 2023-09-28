@@ -9,8 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * This class is the new method in which data is now getting passed between activities.
  * Citation:
@@ -25,7 +23,7 @@ public class ExpBookActivityResult<Input, Result> {
             @Nullable OnActivityResult<Result> onActivityResult
             ) {
         return new ExpBookActivityResult<>(caller, contract, onActivityResult);
-    };
+    }
 
     @NonNull
     public static <Input, Result> ExpBookActivityResult<Input, Result> registerForActivityResult(
@@ -47,7 +45,6 @@ public class ExpBookActivityResult<Input, Result> {
 
     /**
      * This is the callback interface
-     * @param <O>
      */
     public interface OnActivityResult<O> {
         void onActivityResult(O result);

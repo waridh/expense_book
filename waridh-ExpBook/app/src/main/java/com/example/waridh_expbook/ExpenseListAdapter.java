@@ -25,9 +25,7 @@ public class ExpenseListAdapter extends BaseAdapter {
      * @return Count of items.
      */
     @Override
-    public int getCount() {
-        return expenses.size();
-    }
+    public int getCount() {return expenses.size();}
 
     /**
      * Get the data item associated with the specified position in the data set.
@@ -73,9 +71,9 @@ public class ExpenseListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.activity_listview, null);
-        TextView monthStartedText = (TextView)      view.findViewById(R.id.label);
-        TextView expenseName = (TextView)           view.findViewById(R.id.rowName);
-        TextView monthlyCost = (TextView)           view.findViewById(R.id.cost);
+        TextView monthStartedText = view.findViewById(R.id.label);
+        TextView expenseName =      view.findViewById(R.id.rowName);
+        TextView monthlyCost =      view.findViewById(R.id.cost);
 
         /* Setting the text of the list */
         monthStartedText.setText(this.expenses.getMonthStarted(position));

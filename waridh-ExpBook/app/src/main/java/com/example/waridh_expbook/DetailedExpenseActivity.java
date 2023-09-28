@@ -6,21 +6,17 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentResultListener;
-
 public class DetailedExpenseActivity extends SubActivity {
 
-    /* Expense details */
+    /* Expense details (Data) */
     private Expense theExpense;
 
-    /* Need to be able to set the text */
+    /* Text views that need to be changed */
     private TextView monthlyChargeDtv, monthStartedDtv, nameDtv, commentDtv;
     private LinearLayout commentDv;
 
     /* State controlling flags */
-    private boolean fragmentState, editedState;
+    private boolean editedState;
 
     /**
      * @param savedInstanceState If the activity is being re-initialized after
@@ -37,7 +33,6 @@ public class DetailedExpenseActivity extends SubActivity {
 
         /* Getting the contents of the intent */
         this.theExpense = extractExpense(this.getIntent(), ARG_DETAILED_EXPENSE);
-        fragmentState = false;  // The fragment should not be showing immediately when you open
 
         /* Linking the UI elements to objects */
         monthlyChargeDtv = findViewById(R.id.monthly_charge_dtv);
@@ -60,22 +55,17 @@ public class DetailedExpenseActivity extends SubActivity {
         getSupportFragmentManager().setFragmentResultListener(
                 EditEntryFragment.ARG_DETAIL_REQUEST_KEY,
                 this,
-                new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(
-                            @NonNull String requestKey, @NonNull Bundle bundle
-                    ) {
-                        // Going to mostly be unwrapping a bundle
-                        theExpense = extractExpense(
-                                bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
+                (requestKey, bundle) -> {
+                    // Going to mostly be unwrapping a bundle
+                    theExpense = extractExpense(
+                            bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
 
-                        /* Loading the expense object into the activity */
-                        setDetailedTextViews();
+                    /* Loading the expense object into the activity */
+                    setDetailedTextViews();
 
-                        /* Updating the expense in the main activity */
-                        sendExpenseToMainAux(theExpense, LIFE_CODE);
-                        fragmentState = false;  // Flipping the state off.
-                        }});}
+                    /* Updating the expense in the main activity */
+                    sendExpenseToMainAux(theExpense, LIFE_CODE);
+                    });}
 
     /**
      * This method sends the notification that the row has been deleted to the main activity.

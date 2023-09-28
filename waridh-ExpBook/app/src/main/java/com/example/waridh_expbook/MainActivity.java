@@ -1,8 +1,5 @@
 package com.example.waridh_expbook;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentResultListener;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +14,6 @@ public class MainActivity extends BaseActivity {
     /* Data structure for storing the expenses entries */
     private ExpenseList entries;
 
-    /* UI elements */
-    private ListView expenseListView;
     private Button mainDeleteB;
     private TextView appTitle, tableHeader;
 
@@ -36,7 +31,8 @@ public class MainActivity extends BaseActivity {
         this.entries = new ExpenseList();   // Instantiating the data structure
 
         /* Linking UI elements */
-        this.expenseListView = findViewById(R.id.expense_list);
+        /* UI elements */
+        ListView expenseListView = findViewById(R.id.expense_list);
         this.mainDeleteB = findViewById(R.id.main_delete_button);
         this.appTitle = findViewById(R.id.app_title);
         this.tableHeader = findViewById(R.id.table_header);
@@ -50,8 +46,8 @@ public class MainActivity extends BaseActivity {
         this.expenseAdapter = new ExpenseListAdapter(
                 this, this.entries);
 
-        this.expenseListView.setAdapter(this.expenseAdapter);
-        this.expenseListView.setOnItemClickListener(expenseListClick);
+        expenseListView.setAdapter(this.expenseAdapter);
+        expenseListView.setOnItemClickListener(expenseListClick);
         setupFragmentResultListener();
     }
 
@@ -143,16 +139,12 @@ public class MainActivity extends BaseActivity {
         getSupportFragmentManager().setFragmentResultListener(
             EditEntryFragment.ARG_MAIN_REQUEST_KEY,
             this,
-            new FragmentResultListener() {
-                @Override
-                public void onFragmentResult(
-                        @NonNull String requestKey, @NonNull Bundle bundle
-                ) {
+                (requestKey, bundle) -> {
                     // Unwrapping expense from a fragment package
                     Expense theExpense = extractExpense(
                             bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
                     expenseAdapter.add(theExpense); // Adding the returned expense to the list
-                }});
+                });
     }
 
     /**

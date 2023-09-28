@@ -125,6 +125,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:onClick="editButtonFc"
-            android:text="@string/edit_entry_button_text" />
+            android:text="@string/start_edit_entry_button_text" />
     </LinearLayout>
 </LinearLayout>

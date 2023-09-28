@@ -1,12 +1,12 @@
 package com.example.waridh_expbook;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
 import androidx.activity.result.ActivityResult;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import java.util.Objects;
@@ -24,8 +24,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * This method is for bundling an expense into a bundle item, then returning it
-     * @param expense
-     * @return
+     * @param expense is the Expense object that is being bundled
+     * @param key is the string key being used to hold the object in the bundle
+     * @return A new Bundle object that now holds the expense
      */
     public static Bundle bundleExpense(Expense expense, String key) {
         Bundle bundle = new Bundle();
@@ -37,12 +38,20 @@ public abstract class BaseActivity extends AppCompatActivity {
      * This method gets the singular expense object out of the intent. We don't plan on moving
      * around more than one object at a time at this moment.
      * @param intent Any intent object that has an Expense object stored within.
+     * @param key is the string key being used to hold the object in the bundle
      * @return The Expense object that is stored in the intent.
      */
     public static Expense extractExpense(Intent intent, String key) {
         return (Expense) Objects.requireNonNull(intent.getExtras()).getSerializable(key);
     }
 
+    /**
+     * This method extracts the Expense object out of a bundle
+     *
+     * @param bundle The bundle that holds the object of desire
+     * @param key is the string key being used to hold the object in the bundle
+     * @return The Expense object that is required
+     */
     public static Expense extractExpense(Bundle bundle, String key) {
         return (Expense) Objects.requireNonNull(bundle).getSerializable(key);
     }
@@ -63,8 +72,8 @@ public abstract class BaseActivity extends AppCompatActivity {
      * empty.
      * @param nameEt The name field edit text box. Just need to check character length limit.
      * @param monthStartedEt The month started has length check and valid month check.
-     * @param monthlyChargeEt
-     * @return
+     * @param monthlyChargeEt The monthly charge edit text being tested
+     * @return True if all the edit texts follow the constraint, false otherwise
      */
     public static boolean checkFields(
             EditText nameEt, EditText monthStartedEt, EditText monthlyChargeEt) {
@@ -95,7 +104,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             returnValue = false;
         }
 
-        /* Dealing with the money input value. No need to degit test since that is UI locked */
+        /* Dealing with the money input value. No need to digit test since that is UI locked */
         if (isBlank(monthlyChargeEt)) {
             monthlyChargeEt.setError("This field is required");
             returnValue = false;
@@ -103,23 +112,41 @@ public abstract class BaseActivity extends AppCompatActivity {
         return returnValue;
     }
 
+    /**
+     * This method displays the fragment. This overload will also send an expense to the dialog box
+     * @param entry is the Expense object that will be displayed on the fragment.
+     * @param operationMode is the enum that will tell the fragment if it is in add or edit mode.
+     * @param tag The tag
+     */
     protected void displayFragment(
             Expense entry, EditEntryFragment.OpMode operationMode, String tag) {
         EditEntryFragment eeFragment = EditEntryFragment.newInstance(
                 entry, operationMode
         );
-
         /* Beginning fragment transaction */
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        eeFragment.show(fragmentManager, tag);
+        startFragmentTransaction(eeFragment, tag);
     }
 
+    /**
+     * This method displays the fragment. This overload will just show empty edit texts
+     * @param operationMode is an enum that will tell the fragment if it is in add or edit mode.
+     * @param tag the tag
+     */
     protected void displayFragment(EditEntryFragment.OpMode operationMode, String tag) {
         EditEntryFragment eeFragment = EditEntryFragment.newInstance(
                 operationMode);
-
         /* Beginning fragment transaction */
+        startFragmentTransaction(eeFragment, tag);
+    }
+
+    /**
+     * This method starts the dialog fragment with a tag. The dialog fragment class has to be
+     * instantiated already.
+     * @param fragment The dialog fragment that will be rendered
+     * @param tag The tag
+     */
+    private void startFragmentTransaction(DialogFragment fragment, String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        eeFragment.show(fragmentManager, tag);
+        fragment.show(fragmentManager, tag);
     }
 }

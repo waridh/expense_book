@@ -6,6 +6,7 @@
     <string name="add_expense_button">Add Expense</string>
     <string name="back_button">Back</string>
     <string name="edit_entry_button_text">Submit</string>
+    <string name="start_edit_entry_button_text">Edit Entry</string>
     <string name="name_header">Name</string>
     <string name="month_started_header">Month Started</string>
     <string name="comment_hint">Comment (optional)</string>

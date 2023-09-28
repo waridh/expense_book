@@ -180,6 +180,9 @@ public class EditEntryFragment extends DialogFragment {
                         if (fMonthStartedEt.length() == 4 && first > second) {
                             fMonthStartedEt.append("-");
                         }
+                        else if (fMonthStartedEt.length() > 5) {
+
+                        }
                     }
                 }
         );
@@ -188,6 +191,10 @@ public class EditEntryFragment extends DialogFragment {
         applyFilters();
 
         return fView;
+    }
+
+    private String monthStartedPostDash(String s) {
+        return s.replaceFirst("", "");
     }
 
     View.OnClickListener cancelButtonListener = new View.OnClickListener() {
@@ -243,15 +250,12 @@ public class EditEntryFragment extends DialogFragment {
 
     private void applyFilters() {
         // Creating the input filter for the edit texts
-        InputFilter blockSpecChar = new InputFilter() {
-            @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dStart, int dEnd) {
-                final String blockCharacterSet = "./#";
-                if (source != null && blockCharacterSet.contains(("" + source))) {
-                    return "";
-                }
-                return null;
+        InputFilter blockSpecChar = (source, start, end, dest, dStart, dEnd) -> {
+            final String blockCharacterSet = "./#";
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
             }
+            return null;
         };
         // Applying the user input filter into the edit texts
         this.fMonthlyExpenseEt.setFilters(
