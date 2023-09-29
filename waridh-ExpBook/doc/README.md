@@ -11,10 +11,17 @@
     - name
     - date
     - monthly charge
+- Display a summary of the entries
+  - Will sum up the monthly expense and display it.
 - User aid
   - Enforce the type of the input in each of the field
+    - Name must be under 15 characters. A required field.
+    - Month input must be in the `yyyy-mm` format. A required field.
+      - In our implementation, the user could also input `yyyy-m` and it will convert this input into a `yyyy-mm` format.
+    - The monthly expense must be a float with two decimal places. This is a required field.
+      - In our design the decimal isn't necessary and the print will still display the decimals.
+    - The comment must be under 20 characters, but is an optional field.
 
-The data that is stored also have to be in a certain format, so we should be doing a check on the correctness of the user input.
 
 ## Code base
 
