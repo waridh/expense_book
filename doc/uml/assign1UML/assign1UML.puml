@@ -103,8 +103,7 @@ class EditEntryFragment <<Boundary>> {
 
 class Expense <<Entity>> {
   - name : String // 15 characters
-  - month : int
-  - year : int
+  - date : int[]
   - monthlyCharge : float
   - commentFlag : boolean
   - comment : String // 20 characters and optional
@@ -154,7 +153,14 @@ note bottom of Expense
   Current design is that when a change to an expense has been initiated by the
   user, a new expense is created and the old one is left behind to be handled
   by the garbage collector. This will ensure that we don't have to chage the
-  state of the expense object and treat it like an atomic data type.
+  state of the expense object and treat it like an atomic data type. Here are
+  the constraints.
+
+  - name : limit 15 chars
+  - date : not future dates, following yyyy-mm format and only valid characters
+  will pass.
+  - monthlyCharge : a valid money value. Cannot be negative in our case
+  - comment : may or may not exists, and has a limit of 20 characters
 end note
 
 note bottom of MainActivity

@@ -1,10 +1,12 @@
 package com.example.waridh_expbook;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Expense implements Serializable {
     private String name;
-    private int month, year;
+    private int[] date;
     private float monthlyCharge;
 
     /* Comment check. Relying on the Null value might result in bugs later, so I
@@ -23,6 +25,7 @@ public class Expense implements Serializable {
     public Expense(String name, String monthStarted, String charge) {
         this.commentFlag = false;
         this.name = name;
+        this.date = new int[2];
         setMonthStarted(monthStarted);
         setMonthlyCharge(charge);
     }
@@ -32,6 +35,7 @@ public class Expense implements Serializable {
      */
     public Expense(String name, String monthStarted, String charge, String comment) {
         this.name = name;
+        this.date = new int[2];
         setMonthStarted(monthStarted);
         setMonthlyCharge(charge);
         this.commentFlag = true;
@@ -64,7 +68,7 @@ public class Expense implements Serializable {
      * immutability.
      * @return the string representing the month started.
      */
-    public String getMonthStarted() { return String.format("%04d-%02d", year, month); }
+    public String getMonthStarted() { return String.format("%04d-%02d", date[0], date[1]); }
 
     /**
      * Returns the monthly charge
@@ -129,9 +133,7 @@ public class Expense implements Serializable {
      * @param s The "yyyy-mm" format month started input.
      */
     private void setMonthStarted(String s) {
-        String[] intermediate = s.split("-");
-        year = Integer.parseInt(intermediate[0]);
-        month = Integer.parseInt(intermediate[1]);
+        this.date = tokenizeDate(s);
     }
 
     /**
@@ -152,13 +154,41 @@ public class Expense implements Serializable {
     public static boolean monthStartedCheck(String date) {
         if (date.matches("^[0-9]{4}-[0-9]{1,2}$")) {
             int year, month;
-            String[] tokenized = date.split("-");
-            year = Integer.parseInt(tokenized[0]);
-            month = Integer.parseInt(tokenized[1]);
+            int[] inputArray, currentArray;
+
+            /* Converting the input string to integer so that it can be compared */
+            inputArray = tokenizeDate(date);
+            year = inputArray[0];
+            month = inputArray[1];
+
+            /* Getting the current date */
+            Date cDate = new Date();
+            String sDate = new SimpleDateFormat("yyyy-MM").format(cDate);
+            currentArray = tokenizeDate(sDate);
+
             /* This blocks out invalid months and years. */
-            return (0 < month && month < 13) && (0 < year);
+            if (year < currentArray[0])
+                return (0 < month && month < 13) && (0 < year);
+            else if (year == currentArray[0])   // The case where you need to check the month
+                return (0 < month && month <= currentArray[1]);
+            else return false;  // This is the case when the the year is over the current year
         }
         else return false;
+    }
+
+    /**
+     * This method converts a date input into two integers stored in an array
+     * @param date String in the constrained format
+     * @return an integer array that holds the year and month in interger
+     */
+    static int[] tokenizeDate(String date) {
+        String[] tokenized = date.split("-");
+        int[] retArray = {0, 0};
+
+        retArray[0] = Integer.parseInt(tokenized[0]);   // Could use a loop, but only two elements
+        retArray[1] = Integer.parseInt(tokenized[1]);
+
+        return retArray;
     }
 
     /**
