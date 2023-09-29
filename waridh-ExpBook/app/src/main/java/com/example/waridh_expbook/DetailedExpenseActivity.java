@@ -57,8 +57,7 @@ public class DetailedExpenseActivity extends SubActivity {
                 this,
                 (requestKey, bundle) -> {
                     // Going to mostly be unwrapping a bundle
-                    theExpense = extractExpense(
-                            bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
+                    theExpense = extractExpense(bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
 
                     /* Loading the expense object into the activity */
                     setDetailedTextViews();

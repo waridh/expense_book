@@ -6,7 +6,6 @@ import androidx.fragment.app.DialogFragment;
 
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,8 @@ import android.widget.TextView;
 import java.util.Objects;
 
 public class EditEntryFragment extends DialogFragment {
+
+    /* The following enums are for fragment controlling */
     enum OpMode {
         EDIT,
         ADD
@@ -104,11 +105,11 @@ public class EditEntryFragment extends DialogFragment {
         if (getArguments() != null) {   // Argument safety-check
             Expense argExpense;
             operationMode = (OpMode) requireArguments().getSerializable(ARG_OP_MODE);
-            EEFOptions option = (EEFOptions) requireArguments().getSerializable(
-                    ARG_EXISTANCE_CHECK);
+            EEFOptions option
+                    = (EEFOptions) requireArguments().getSerializable(ARG_EXISTANCE_CHECK);
             /* Checking if we have an input expense or not. Also include the flow control for that*/
             switch(Objects.requireNonNull(option)) {
-                case SOME:
+                case SOME:  // There is expense being passed in
                     argExpense = (Expense) getArguments().getSerializable(ARG_EXPENSE);
                     fName = argExpense.getName();
                     fMonthStarted = argExpense.getMonthStarted();
@@ -118,11 +119,12 @@ public class EditEntryFragment extends DialogFragment {
                         fComment = argExpense.getComment();
                     }
                     break;
-                case NONE:
+                case NONE:  // No expense being passed in
                     argExpense = null;
                     break;
                 default:
             }
+
             /* The effects from the operation mode */
             switch(operationMode) {
                 case EDIT:
@@ -136,6 +138,18 @@ public class EditEntryFragment extends DialogFragment {
         }
     }
 
+    /**
+     * The method that will run after views are created. Many UI setups.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -161,8 +175,8 @@ public class EditEntryFragment extends DialogFragment {
         /* Automatically putting in the hyphen when the user is putting in the month started */
         this.fMonthStartedEt.addTextChangedListener(
                 new TextWatcher() {
-                    int first = 0;
-                    int second;
+                    int current = 0;
+                    int previous;
 
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -174,14 +188,12 @@ public class EditEntryFragment extends DialogFragment {
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        second = first;
-                        first = s.length();
+                        previous = current;
+                        current = s.length();
 
-                        if (fMonthStartedEt.length() == 4 && first > second) {
+                        /* This handle will work when the user is on mobile (no access to -) */
+                        if (fMonthStartedEt.length() == 4 && current > previous) {
                             fMonthStartedEt.append("-");
-                        }
-                        else if (fMonthStartedEt.length() > 5) {
-
                         }
                     }
                 }
@@ -193,14 +205,10 @@ public class EditEntryFragment extends DialogFragment {
         return fView;
     }
 
-    private String monthStartedPostDash(String s) {
-        return s.replaceFirst("", "");
-    }
-
     View.OnClickListener cancelButtonListener = new View.OnClickListener() {
 
         /**
-         * Called when a view has been clicked.
+         * Called when a view has been clicked. Needed for controlling the cancel button on fragment
          *
          * @param v The view that was clicked.
          */
@@ -213,7 +221,7 @@ public class EditEntryFragment extends DialogFragment {
     View.OnClickListener submitChangesButtonListener = new View.OnClickListener() {
 
         /**
-         * Called when a view has been clicked.
+         * Called when a view has been clicked. Using on click listener since it works on fragments
          *
          * @param v The view that was clicked.
          */
@@ -248,28 +256,26 @@ public class EditEntryFragment extends DialogFragment {
 
     }
 
+    /**
+     * This method sets up the edit text box filters so that the users do not break the constraints
+     */
     private void applyFilters() {
-        // Creating the input filter for the edit texts
+        // Creating the input filter for month started edit text. Blocks special characters
         InputFilter blockSpecChar = (source, start, end, dest, dStart, dEnd) -> {
             final String blockCharacterSet = "./#";
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                return "";
-            }
+            if (source != null && blockCharacterSet.contains(("" + source))) return "";
             return null;
         };
         // Applying the user input filter into the edit texts
-        this.fMonthlyExpenseEt.setFilters(
-                new InputFilter[] {
-                        new DecimalDigitInputFilter(
-                                100, 2)});
-        this.fMonthStartedEt.setFilters(
-                new InputFilter[] {
-                        blockSpecChar, new InputFilter.LengthFilter(7)});
-        this.fCommentEt.setFilters(
-                new InputFilter[] {
-                        new InputFilter.LengthFilter(20)});
-        this.fNameEt.setFilters(
-                new InputFilter[] {new InputFilter.LengthFilter(15)});
+        this.fMonthlyExpenseEt.setFilters( new InputFilter[] {
+                        new DecimalDigitInputFilter(10, 2)});
+        /* Setting up a length filter for the month started as well */
+        this.fMonthStartedEt.setFilters( new InputFilter[] {blockSpecChar,
+                new InputFilter.LengthFilter(7)});
+        // Comment length constraint
+        this.fCommentEt.setFilters( new InputFilter[] {new InputFilter.LengthFilter(20)});
+        // Name length constraint
+        this.fNameEt.setFilters(new InputFilter[] {new InputFilter.LengthFilter(15)});
     }
 
     /**
@@ -277,8 +283,7 @@ public class EditEntryFragment extends DialogFragment {
      * @return Boolean that is true when the user input follows the constraint, and false if not
      */
     private boolean checkFields() {
-        return BaseActivity.checkFields(
-                this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt);
+        return BaseActivity.checkFields(this.fNameEt, this.fMonthStartedEt, this.fMonthlyExpenseEt);
     }
 
     /**
@@ -286,10 +291,8 @@ public class EditEntryFragment extends DialogFragment {
      * @return The Expense object that contains the data that the user input.
      */
     private Expense acceptUserInput() {
-        return Expense.newInstance(
-                fNameEt.getText().toString(),
-                fMonthStartedEt.getText().toString(),
-                fMonthlyExpenseEt.getText().toString(),
+        return Expense.newInstance( fNameEt.getText().toString(),
+                fMonthStartedEt.getText().toString(), fMonthlyExpenseEt.getText().toString(),
                 fCommentEt.getText().toString()
         );
     }

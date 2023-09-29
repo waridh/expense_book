@@ -19,8 +19,7 @@ public abstract class SubActivity extends BaseActivity {
      */
     public void returnToMain(View view) {
         setResult(Activity.RESULT_CANCELED);
-        finish();
-    }
+        finish();}
 
     /**
      * This method will return the activity to main along with passing back some data stored in a
@@ -32,13 +31,14 @@ public abstract class SubActivity extends BaseActivity {
         Intent resultIntent = new Intent();
         resultIntent.putExtras(bundle);
         setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-    }
+        finish();}
 
+    /**
+     * This method will send the result of the activity to the main activity.
+     * @param bundle The bundle containing the result being sent back
+     */
     protected void sendResultToMain(Bundle bundle) {
         Intent resultIntent = new Intent();
         resultIntent.putExtras(bundle);
-        setResult(Activity.RESULT_OK, resultIntent);
-    }
-
+        setResult(Activity.RESULT_OK, resultIntent);}
 }

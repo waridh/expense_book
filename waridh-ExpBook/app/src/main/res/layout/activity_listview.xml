@@ -23,85 +23,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
+                    android:layout_weight="@string/name_weight"
                     android:gravity="center"
                     android:text="Tau"
+                    android:fontFamily="serif-monospace"
                     android:textColor="@color/black"
-                    android:textSize="20dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
+                    android:layout_weight="@string/date_weight"
+                    android:fontFamily="serif-monospace"
                     android:gravity="center"
                     android:text="40"
                     android:textColor="@color/black"
-                    android:textSize="20dp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/cost"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
+                    android:layout_weight="@string/price_weight"
+                    android:fontFamily="serif-monospace"
                     android:gravity="center"
                     android:text="23"
                     android:textColor="@color/black"
-                    android:textSize="20dp" />
+                    android:textSize="15sp" />
 
 
         </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    android:layout_width="fill_parent"-->
-<!--    android:layout_height="fill_parent"-->
-<!--    android:layout_marginBottom="0dp"-->
-<!--    android:layout_marginTop="0dp"-->
-<!--    android:focusableInTouchMode="true">-->
-
-<!--        &lt;!&ndash;<ImageView&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:id="@+id/fruitImg"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_width="wrap_content"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_height="wrap_content"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_centerVertical="true"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:paddingRight="10dp"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:paddingTop="10dp"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:paddingLeft="10dp"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:scaleType="centerCrop" />&ndash;&gt;-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/rowName"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textStyle="bold"-->
-<!--            android:text="Cherry"/>-->
-
-<!--        &lt;!&ndash;<TextView&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:id="@+id/calories"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_width="wrap_content"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_height="wrap_content"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_alignParentRight="true"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:layout_centerVertical="true"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:paddingTop="10dp"&ndash;&gt;-->
-<!--        &lt;!&ndash;    android:paddingRight="10dp"/>&ndash;&gt;-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/label"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textStyle="bold" />-->
-<!--        <TextView-->
-<!--            android:id="@+id/cost"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textStyle="bold" />-->
-<!--</RelativeLayout>-->

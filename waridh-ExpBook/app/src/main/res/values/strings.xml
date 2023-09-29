@@ -16,4 +16,5 @@
     <string name="delete_mode_header">Delete Mode</string>
     <string name="delete_mode_sub_header">Tap item to delete</string>
     <string name="delete_mode_delete_button">Cancel</string>
+
 </resources>

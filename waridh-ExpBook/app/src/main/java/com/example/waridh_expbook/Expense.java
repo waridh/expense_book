@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Expense implements Serializable {
     private String name;
-    private String monthStarted;
+    private int month, year;
     private float monthlyCharge;
 
     /* Comment check. Relying on the Null value might result in bugs later, so I
@@ -23,7 +23,7 @@ public class Expense implements Serializable {
     public Expense(String name, String monthStarted, String charge) {
         this.commentFlag = false;
         this.name = name;
-        this.monthStarted = monthStarted;
+        setMonthStarted(monthStarted);
         setMonthlyCharge(charge);
     }
 
@@ -32,7 +32,7 @@ public class Expense implements Serializable {
      */
     public Expense(String name, String monthStarted, String charge, String comment) {
         this.name = name;
-        this.monthStarted = monthStarted;
+        setMonthStarted(monthStarted);
         setMonthlyCharge(charge);
         this.commentFlag = true;
         this.comment = comment;
@@ -64,17 +64,25 @@ public class Expense implements Serializable {
      * immutability.
      * @return the string representing the month started.
      */
-    public String getMonthStarted() { return monthStarted; }
+    public String getMonthStarted() { return String.format("%04d-%02d", year, month); }
 
     /**
      * Returns the monthly charge
      * @return Returns the monthly charge in String.
      */
     public String getMonthlyCharge() {
-        return String.format("%6.2f", monthlyCharge); }
+        return String.format("%.2f", monthlyCharge); }
 
     public String getMonthlyChargeNice() {
-        return String.format("$%6.2f", monthlyCharge); }
+        return String.format("$%8.2f", monthlyCharge); }
+
+    /**
+     * This method returns the dollar amount of the monthly expense as a float
+     * @return the dollar value as a float
+     */
+    public Float getMonthlyChargeFloat() {
+        return monthlyCharge;
+    }
 
     /**
      * This method returns the comment that is stored in this expense entry. If it doesn't exist
@@ -105,8 +113,25 @@ public class Expense implements Serializable {
         return (name.length() <= 15 && name.length() > 0);
     }
 
+    /**
+     * This method takes in the monthly charge in String and then converts it to float, as that is
+     * how the value is being stored. Also places it in the instance variable.
+     * @param money The string representing the value of the monthly expense.
+     */
     private void setMonthlyCharge(String money) {
         this.monthlyCharge = Float.parseFloat(money);
+    }
+
+    /**
+     * Stores the month started in the instance variable. Since we are storing both year and month
+     * separately so that we could take in months of just single digits (both 6 and 06), we need to
+     * convert the input string into integers.
+     * @param s The "yyyy-mm" format month started input.
+     */
+    private void setMonthStarted(String s) {
+        String[] intermediate = s.split("-");
+        year = Integer.parseInt(intermediate[0]);
+        month = Integer.parseInt(intermediate[1]);
     }
 
     /**
@@ -125,7 +150,7 @@ public class Expense implements Serializable {
      * @return a boolean that is true when it is following constraint, and false when not.
      */
     public static boolean monthStartedCheck(String date) {
-        if (date.matches("^[0-9]{4}-[0-9]{2}$")) {
+        if (date.matches("^[0-9]{4}-[0-9]{1,2}$")) {
             int year, month;
             String[] tokenized = date.split("-");
             year = Integer.parseInt(tokenized[0]);

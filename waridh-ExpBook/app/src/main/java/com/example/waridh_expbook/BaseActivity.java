@@ -1,3 +1,10 @@
+/*
+ * BaseActivity
+ *
+ * 2023/09/29
+ *
+ *
+ */
 package com.example.waridh_expbook;
 
 import android.content.Intent;
@@ -133,8 +140,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param tag the tag
      */
     protected void displayFragment(EditEntryFragment.OpMode operationMode, String tag) {
-        EditEntryFragment eeFragment = EditEntryFragment.newInstance(
-                operationMode);
+        EditEntryFragment eeFragment = EditEntryFragment.newInstance(operationMode);
         /* Beginning fragment transaction */
         startFragmentTransaction(eeFragment, tag);
     }

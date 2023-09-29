@@ -30,33 +30,98 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/table_header"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/summary_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:layout_weight="1"
+                android:textSize="20dp"
+                android:text="Total monthly expense: " />
+
+            <TextView
+                android:id="@+id/expense_sum_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="Name Date Price"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="Name Date Price"
-            android:textSize="30dp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/name_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_weight="@string/name_weight"
+                android:text="Name"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:id="@+id/date_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_weight="@string/date_weight"
+                android:text="Date"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/price_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_weight="@string/price_weight"
+                android:text="Price"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <ListView
             android:id="@+id/expense_list"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:layout_width="match_parent"
             android:layout_height="472dp">
 
         </ListView>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/main_delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:onClick="deleteEntryButtonFc"
             />
@@ -66,6 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="addEntryButtonFc"
+            android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:text="@string/add_expense_button" />
     </LinearLayout>

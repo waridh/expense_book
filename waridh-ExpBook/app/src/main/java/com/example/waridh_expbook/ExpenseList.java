@@ -35,6 +35,12 @@ public class ExpenseList {
         if (i < expenses.size()) return expenses.get(i);
         else return null;}
 
+    public String getSum() {
+        float sum = 0;
+        for (Expense e : expenses) sum += e.getMonthlyChargeFloat();
+        return String.format("$%6.2f", sum);
+    }
+
     /**
      * This method returns a string that represents the monthly charge of the expense. Has a dollar
      * sign ($).

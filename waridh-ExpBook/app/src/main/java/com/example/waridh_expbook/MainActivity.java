@@ -15,7 +15,7 @@ public class MainActivity extends BaseActivity {
     private ExpenseList entries;
 
     private Button mainDeleteB;
-    private TextView appTitle, tableHeader;
+    private TextView appTitle, nameHeader, dateHeader,  priceHeader, expenseSumTv;
 
     /* The view adapters */
     private ExpenseListAdapter expenseAdapter;
@@ -31,17 +31,15 @@ public class MainActivity extends BaseActivity {
         this.entries = new ExpenseList();   // Instantiating the data structure
 
         /* Linking UI elements */
-        /* UI elements */
         ListView expenseListView = findViewById(R.id.expense_list);
         this.mainDeleteB = findViewById(R.id.main_delete_button);
         this.appTitle = findViewById(R.id.app_title);
-        this.tableHeader = findViewById(R.id.table_header);
-        setDefaultModeUI();
+        this.nameHeader = findViewById(R.id.name_header);
+        this.dateHeader = findViewById(R.id.date_header);
+        this.priceHeader = findViewById(R.id.price_header);
+        this.expenseSumTv = findViewById(R.id.expense_sum_text);
 
-        /* This is some debugging entries TODO: Delete these.*/
-        this.entries.add(new Expense("Bach", "2000-05", "100.00"));
-        this.entries.add(new Expense("Brahm", "2000-05", "100.00"));
-        this.entries.add(new Expense("Watrina", "2000-05", "1000.00"));
+        setDefaultModeUI(); // Set standard UI elements
 
         this.expenseAdapter = new ExpenseListAdapter(
                 this, this.entries);
@@ -60,8 +58,7 @@ public class MainActivity extends BaseActivity {
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             if (deleteMode) expenseAdapter.remove(position);
             else openEntryDetailsForResult(position);    // This method opens the detailed view
-        }
-    };
+            }};
 
     /**
      * This method is called when the add entry button has been clicked.
@@ -99,15 +96,16 @@ public class MainActivity extends BaseActivity {
                 /* This code means that the entry was updated. */
                 if (result.getData() != null) {
                     /* Deleting the expense or updating it? */
-                    if (result.getData().getExtras().getByte(ARG_EXPENSE_LIST_COMMAND) == DEAD_CODE) {
+                    if (result.getData().getExtras().getByte(ARG_EXPENSE_LIST_COMMAND)
+                            == DEAD_CODE) {
                         expenseAdapter.remove(index);
                     }
-                    else expenseAdapter.set(
-                        index,
-                        extractExpense(
-                                result.getData(),
-                                ARG_RETURNED_EXPENSE)
-                    );
+                    else {
+                        expenseAdapter.set(index,
+                                extractExpense(result.getData(),
+                                        ARG_RETURNED_EXPENSE));
+                        setDefaultModeUI(); // Quick way to get the summation updated
+                    }
                 }
             }
         });
@@ -141,9 +139,10 @@ public class MainActivity extends BaseActivity {
             this,
                 (requestKey, bundle) -> {
                     // Unwrapping expense from a fragment package
-                    Expense theExpense = extractExpense(
-                            bundle, EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
+                    Expense theExpense = extractExpense(bundle,
+                            EditEntryFragment.ARG_FRAG_BUNDLE_KEY);
                     expenseAdapter.add(theExpense); // Adding the returned expense to the list
+                    setDefaultModeUI();
                 });
     }
 
@@ -159,17 +158,29 @@ public class MainActivity extends BaseActivity {
      * Sets the texts on the UI to be the default values for non-delete usage.
      */
     private void setDefaultModeUI() {
+        /* Need to make sure that the other header UIs are not gone */
+        this.dateHeader.setVisibility(View.VISIBLE);
+        priceHeader.setVisibility(View.VISIBLE);
+
+        /* Setting up the text for these */
         this.appTitle.setText(getString(R.string.header_text));
-        this.tableHeader.setText("Name Date Price");
+        this.nameHeader.setText("Name");
+        this.dateHeader.setText("Date");
+        this.priceHeader.setText("Price");
         this.mainDeleteB.setText(getString(R.string.delete_expense_button_text));
+        this.expenseSumTv.setText(entries.getSum());
     }
 
     /**
      * Sets the texts on the UI to guide users to do delete mode.
      */
     private void setDeleteModeUI() {
+        /* Need to hide the other fields so it doesn't interfere*/
+        this.dateHeader.setVisibility(View.GONE);
+        this.priceHeader.setVisibility(View.GONE);
+
         this.appTitle.setText(getString(R.string.delete_mode_header));
-        this.tableHeader.setText(getString(R.string.delete_mode_sub_header));
+        this.nameHeader.setText(getString(R.string.delete_mode_sub_header));
         this.mainDeleteB.setText(getString(R.string.delete_mode_delete_button));
     }
 }

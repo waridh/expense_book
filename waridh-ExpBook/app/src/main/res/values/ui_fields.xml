@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="name_weight">1</string>
+    <string name="date_weight">1</string>
+    <string name="price_weight">1</string>
+</resources>

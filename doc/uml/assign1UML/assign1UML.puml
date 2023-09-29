@@ -7,71 +7,136 @@ class AppCompatActivity {
 
 abstract class BaseActivity {
   #ExpBookActivityResult<Intent, ActivityResult>
+  {static}+ ARG_DETAILED_EXPENSE : String = "entry" {readOnly};
+  {static}+ ARG_RETURNED_EXPENSE : String = "entry2" {readOnly};
+  {static}+ ARG_EXPENSE_LIST_COMMAND : String = "expense_command"{readOnly};
+  {static}+ LIFE_CODE : byte = 1 {readOnly};
+  {static}+ DEAD_CODE : byte = -1 {readOnly};
+
   +super()
+  {static}+ bundleExpense(expense : Expense, key : String) : Bundle
+  {static}+ extractExpense(intent : Intent, key : String) : Expense
+  {static}+ extractExpense(bundle : Bundle, key : String) : Expense
+  {static}+ isBlank(et : EditText) : boolean
+  {static}+ checkFields(nameEt : EditText, monthStartedEt : EditText, monthlyChargeEt : EditText) : boolean
+  #displayFragment(entry : Expense, operationMode : EditEntryFragment.OpMode, tag : String) : void
+  #displayFragment(operationMode : EditEntryFragment.OpMode, tag : String) : void
+  -startFragmentTransaction(fragment : DialogFragment, tag : String) : void
 }
 
 class DialogFragment {
   +super()
 }
 
-class ExpBookActivityResult {
+class ExpBookActivityResult<Input, Result> {
   -launcher : ActivityresultLauncher<Input>
 }
 
 abstract class SubActivity {
-  +returnToMain(view : View)
+  +returnToMain(view : View) : void
+  #returnResultToMain(bundle : Bundle) : void
   +super()
 }
 
 class ExpenseListAdapter{
+  - context : Context
   - entries : ExpenseList
-  + getView(position : int, convertView : View, parent : ViewGroup)
+  - inflater : LayoutInflater
+  + getView(position : int, convertView : View, parent : ViewGroup) : View
+  + getCount() : int
+  + getItem(position : int) : Object
+  + remove(index : int) : void
+  + add(newEntry : Expense) : void
+  + set(index : int, editedEntry : Expense) : void
 }
 
 class MainActivity {
   - entries : ExpenseList
   - expenseListView : ListView
   - expenseAdapter : ExpenseListAdapter
+  - deleteMode : boolean
   + super()
   + openNewEntry(view : View) : void
+  - openEntryDetailsForResult(index : int) : void
+  - toggleDeleteMode() : void
+  - activateDeleteMode() : void
+  - deactivateDeleteMode() : void
+  - setDefaultModeUI() : void
+  - setDeleteModeUI() : void
+  - setupFragmentResultListener() : void
 }
 
 class DetailedExpenseActivity {
-  - entries : ExpenseList
+  - theExpense : Expense
+  - monthlyChargeDtv : TextView
+  - monthStartedDtv : TextView
+  - nameDtv : TextView
+  - commentDtv : TextView
   + super()
+  - setupFragmentResultListener() : void
+  - deleteExpense() : void
+  - setDetailedTextViews() : void
+  - setCommentDetailedTextView(comment : String) : void
+  + returnToMain(view : View) : void
+}
+
+enum OpMode {
+  EDIT
+  ADD
+}
+enum EEFOptions {
+  SOME
+  NONE
 }
 
 class EditEntryFragment {
+  {static}- ARG_EXPENSE {readOnly} : String
+  {static}- ARG_OP_MODE {readOnly} : String
+  {static}- ARG_EXISTANCE_CHECK {readOnly} : String
+  - operationMode : OpMode
   + super()
-}
-
-class NewEntryActivity {
-  - entries : ExpenseList
-  + super()
-  + returnToMain() : void
+  - applyFilters() : void
+  - checkFields() : boolean
+  - acceptUserInput() : Expense
+  - sendResult(expense : Expense) : void
 }
 
 class Expense {
   - name : String // 15 characters
-  - monthStarted : String // yyyy-mm format
-  - monthlyCharge : String // CAD
+  - month : int
+  - year : int
+  - monthlyCharge : float
+  - commentFlag : boolean
   - comment : String // 20 characters and optional
 
-  +setName(name : String) : void
-  +summaryToString() : String
   +getName() : String
   +getComment() : String
-  +getDate() : String
-  +equals(other : Expense) : boolean
+  +getCommentFlag() : boolean
+  +getMonthStarted() : String
+  +getMonthlyCharge() : String
+  +getMonthlyChargeNice() : String
+  +getMonthlyChargeFloat() : float
+  +setMonthlyCharge(monthlyCharge : String) : void
+  +setMonthStarted(monthStarted : String) : void
+  {static}+monthStartedCheck(monthStarted : String) : boolean
+  {static}+monthlyChargeCheck(monthlyCharge : String) : boolean
+  {static}+commentCheck(comment : String) : boolean
 }
 
 class ExpenseList {
   -expenses : ArrayList<Expense>
-  +addExpense(expense : Expense) : void
+  +add(expense : Expense) : void
   +editExpense(index : int, newValues : Expense) : void
   +viewExpense(index : int) : void
-  +deleteExpense(index : int) : void
+  +remove(index : int) : void
   +get(index : int) : Expense
+  +getName(index : int) : String
+  +getMonthlyChargeNice(index : int) : String
+  +getMonthStarted(index : int) : String
+  +getComment(index : int) : String
+  +getSum() : String
+  +size() : int
+  +set(index : int, newExpense : Expense) : void
 }
 
 note bottom of ExpenseList
@@ -108,20 +173,21 @@ BaseActivity *-- "1" ExpBookActivityResult
 
 /' The classes that extends SubActivity '/
 SubActivity <|-- DetailedExpenseActivity
-SubActivity <|-- NewEntryActivity
 
 /' The class that inherits from Fragment '/
 DialogFragment <|-- EditEntryFragment
 
+EditEntryFragment *-- "1" OpMode
+
 /' This is the relationship for the MainActivity '/
-MainActivity *-- "1" ExpenseList
 MainActivity *-- "1" ExpenseListAdapter
 
 /' For relationships between the activities '/
-MainActivity -- NewEntryActivity : "Create new expense entry"
 MainActivity -- DetailedExpenseActivity : "Shows detail of an expense entry"
 DetailedExpenseActivity -- EditEntryFragment : "Opens fragment when editing"
+MainActivity -- EditEntryFragment : "Opens fragment when adding"
 
 ExpenseList *-- "0..*" Expense
+ExpenseList "1" --* ExpenseListAdapter
 
 @enduml
