@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 /**
  * This class is designed to hold the expenses. Also has methods that will help quickly add and edit
- * the fields of the expense.
+ * the fields of the expense. Handles summation of information, and if the project were to continue,
+ * it can be used to calculate the statistics of the list of expenses.
  */
 public class ExpenseList {
-    private final ArrayList<Expense> expenses;    // This is out internal data structure for all the rows
+    // This is out internal data structure for all the rows
+    private final ArrayList<Expense> expenses;
 
     /**
      * The constructor for the object. Initializes the ArrayList holding the data.

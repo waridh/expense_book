@@ -7,7 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class was used to implement the input filter.
+ * This class was used to implement the input filter. Makes sure that the user cannot input more
+ * than 2 decimal digits.
  */
 public class DecimalDigitInputFilter implements InputFilter {
     Pattern decimalPattern;

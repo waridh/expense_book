@@ -9,6 +9,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+/**
+ * The ExpenseListAdapter is a custom adapter that can take the ExpenseList object and display the
+ * data in the list view.
+ * This class can also handle updating the list of entries, and will update the list view as it
+ * happens. Required when working with custom objects.
+ */
 public class ExpenseListAdapter extends BaseAdapter {
     Context context;
     ExpenseList expenses;   // Points to the same expense list on the heap as the activity.

@@ -4,6 +4,14 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * This class is an entity class that represents a row/entry/expense. It contains all four fields
+ * and stores them as instance variables. This class is intended to be used an an immutable object
+ * that gets replaced when the user makes an edit. The discarded class then gets taken cared off by
+ * the garbage collector.
+ * This keeps the flow control logic simpler, and builds to the android system of having to bundle
+ * data when communicating between different activities and fragments.
+ */
 public class Expense implements Serializable {
     private String name;
     private int[] date;
@@ -179,7 +187,7 @@ public class Expense implements Serializable {
     /**
      * This method converts a date input into two integers stored in an array
      * @param date String in the constrained format
-     * @return an integer array that holds the year and month in interger
+     * @return an integer array that holds the year and month in integer
      */
     static int[] tokenizeDate(String date) {
         String[] tokenized = date.split("-");

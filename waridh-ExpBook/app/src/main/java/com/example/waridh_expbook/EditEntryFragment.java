@@ -16,6 +16,13 @@ import android.widget.TextView;
 
 import java.util.Objects;
 
+/**
+ * This is a fragment class for taking in user input for expense generation. Generalized so that
+ * it can add new expenses and also edit existing expenses.
+ * Uses enum in the construction to determine if it should display texts for adding or editing, and
+ * also checks if it needs to show the data from an input expense or not.
+ * Sends data back to the parent activity by using a fragment listener.
+ */
 public class EditEntryFragment extends DialogFragment {
 
     /* The following enums are for fragment controlling */

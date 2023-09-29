@@ -18,6 +18,12 @@ import androidx.fragment.app.FragmentManager;
 
 import java.util.Objects;
 
+/**
+ * This is the super class to all the activities in the project. Needed so that all activities
+ * inherits the ability to display a fragment. Also includes methods that lets expenses be wrapped
+ * and unwrapped for communication with other activities and fragments along with a check for
+ * user input and the constraint.
+ */
 public abstract class BaseActivity extends AppCompatActivity {
     protected final ExpBookActivityResult<Intent, ActivityResult> activityLauncher
             = ExpBookActivityResult.registerActivityForResult(this);

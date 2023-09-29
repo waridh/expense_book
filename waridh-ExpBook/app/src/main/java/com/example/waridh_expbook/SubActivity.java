@@ -8,8 +8,10 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
- * All sub activity of the main activity has to be able to navigate back. This is a nice abstraction
- * to let that happen.
+ * All sub activity of the main activity has to be able to navigate back. This is an abstraction
+ * to let that happen. Having this abstracted means that when we extend the application and add more
+ * activities, we could have an abstraction already present.
+ * (The design used to have more than two activities, so this super class made sense back then).
  */
 public abstract class SubActivity extends BaseActivity {
     /**

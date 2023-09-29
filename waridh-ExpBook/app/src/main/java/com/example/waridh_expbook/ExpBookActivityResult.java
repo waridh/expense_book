@@ -10,7 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * This class is the new method in which data is now getting passed between activities.
+ * This class is the new method in which data is now getting passed between activities. Makes
+ * activity result listening much more simple.
  * Citation:
  * <a href="https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative">...</a>
  * @param <Input>

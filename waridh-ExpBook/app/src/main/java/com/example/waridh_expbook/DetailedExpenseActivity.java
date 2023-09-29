@@ -6,6 +6,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * This is the activity class for the detailed view of a row. Controls the UI and also both handles
+ * edit fragment (calling and receiving data) and sending data back to the main activity if any
+ * changes were made.
+ */
 public class DetailedExpenseActivity extends SubActivity {
 
     /* Expense details (Data) */

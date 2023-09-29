@@ -28,10 +28,6 @@ class DialogFragment <<Boundary>> {
   +super()
 }
 
-class ExpBookActivityResult<Input, Result> <<Control>> {
-  -launcher : ActivityresultLauncher<Input>
-}
-
 abstract class SubActivity <<Control/Boundary>> {
   +returnToMain(view : View) : void
   #returnResultToMain(bundle : Bundle) : void
@@ -143,12 +139,6 @@ note bottom of ExpenseList
   listing. Has methods that lets the programs add, edit, and delete entries.
 end note
 
-note bottom of ExpBookActivityResult
-  This class is the encapsulation of the new activity result system that google
-  decided to impose on people, since the old method is now deprecated. Allows
-  for cleaner code when trying to retrieve data from a subactivity.
-end note
-
 note bottom of Expense
   Current design is that when a change to an expense has been initiated by the
   user, a new expense is created and the old one is left behind to be handled
@@ -209,9 +199,6 @@ AppCompatActivity <|-- BaseActivity
 objects around '/
 BaseActivity <|-- MainActivity
 BaseActivity <|-- SubActivity
-
-/' BaseActivity Components '/
-BaseActivity *-- "1" ExpBookActivityResult
 
 /' The classes that extends SubActivity '/
 SubActivity <|-- DetailedExpenseActivity

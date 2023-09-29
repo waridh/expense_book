@@ -9,6 +9,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * This is the main activity class. It handles both the UI control for the main activity and the
+ * logic behind user interaction and how the program should react to them.
+ */
 public class MainActivity extends BaseActivity {
 
     /* Data structure for storing the expenses entries */
