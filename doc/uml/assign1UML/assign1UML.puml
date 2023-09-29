@@ -1,11 +1,11 @@
 @startuml
   skinparam classAttributeIconSize 0
 
-class AppCompatActivity {
+class AppCompatActivity <<Control/Boundary>> {
   +super()
 }
 
-abstract class BaseActivity {
+abstract class BaseActivity <<Control/Boundary>> {
   #ExpBookActivityResult<Intent, ActivityResult>
   {static}+ ARG_DETAILED_EXPENSE : String = "entry" {readOnly};
   {static}+ ARG_RETURNED_EXPENSE : String = "entry2" {readOnly};
@@ -24,21 +24,21 @@ abstract class BaseActivity {
   -startFragmentTransaction(fragment : DialogFragment, tag : String) : void
 }
 
-class DialogFragment {
+class DialogFragment <<Boundary>> {
   +super()
 }
 
-class ExpBookActivityResult<Input, Result> {
+class ExpBookActivityResult<Input, Result> <<Control>> {
   -launcher : ActivityresultLauncher<Input>
 }
 
-abstract class SubActivity {
+abstract class SubActivity <<Control/Boundary>> {
   +returnToMain(view : View) : void
   #returnResultToMain(bundle : Bundle) : void
   +super()
 }
 
-class ExpenseListAdapter{
+class ExpenseListAdapter <<Control>>{
   - context : Context
   - entries : ExpenseList
   - inflater : LayoutInflater
@@ -50,7 +50,7 @@ class ExpenseListAdapter{
   + set(index : int, editedEntry : Expense) : void
 }
 
-class MainActivity {
+class MainActivity <<Control/Boundary>> {
   - entries : ExpenseList
   - expenseListView : ListView
   - expenseAdapter : ExpenseListAdapter
@@ -66,7 +66,7 @@ class MainActivity {
   - setupFragmentResultListener() : void
 }
 
-class DetailedExpenseActivity {
+class DetailedExpenseActivity <<Control/Boundary>> {
   - theExpense : Expense
   - monthlyChargeDtv : TextView
   - monthStartedDtv : TextView
@@ -89,7 +89,7 @@ enum EEFOptions {
   NONE
 }
 
-class EditEntryFragment {
+class EditEntryFragment <<Boundary>> {
   {static}- ARG_EXPENSE {readOnly} : String
   {static}- ARG_OP_MODE {readOnly} : String
   {static}- ARG_EXISTANCE_CHECK {readOnly} : String
@@ -101,7 +101,7 @@ class EditEntryFragment {
   - sendResult(expense : Expense) : void
 }
 
-class Expense {
+class Expense <<Entity>> {
   - name : String // 15 characters
   - month : int
   - year : int
@@ -123,7 +123,7 @@ class Expense {
   {static}+commentCheck(comment : String) : boolean
 }
 
-class ExpenseList {
+class ExpenseList <<Control>> {
   -expenses : ArrayList<Expense>
   +add(expense : Expense) : void
   +editExpense(index : int, newValues : Expense) : void
@@ -141,22 +141,58 @@ class ExpenseList {
 
 note bottom of ExpenseList
   This is the class representing the data structure that holds all the expenses
-  listing.
+  listing. Has methods that lets the programs add, edit, and delete entries.
 end note
 
 note bottom of ExpBookActivityResult
   This class is the encapsulation of the new activity result system that google
-  decided to impose on people, since the old method is now deprecated.
+  decided to impose on people, since the old method is now deprecated. Allows
+  for cleaner code when trying to retrieve data from a subactivity.
 end note
 
 note bottom of Expense
-  Need to have setters so that editing of pre-existing expenses is possible.
+  Current design is that when a change to an expense has been initiated by the
+  user, a new expense is created and the old one is left behind to be handled
+  by the garbage collector. This will ensure that we don't have to chage the
+  state of the expense object and treat it like an atomic data type.
 end note
 
 note bottom of MainActivity
   This is the MainActivity class in Android studio. This is effectively the
   entrance program. This means that when you launch up the application, this
-  is the first class that the program effectively enters.
+  is the first class that the program effectively enters. It handles both the
+  user interface, but more importantly, it does the flow control logic of the
+  app. This activity can launch the edit entry fragment in ADD mode, which will
+  let user make a new entry. It will also launch the detailed activity view when
+  the user selects an item in the list. This view shows the details of the
+  activity.
+end note
+
+note bottom of DetailedExpenseActivity
+  The detailed expense activity displays the details of a selected expense.
+  Like the main activity, it will also launch the edit entry fragment, but in
+  EDIT mode, where users can change the entry details.
+end note
+
+note bottom of ExpenseListAdapter
+  This is the adapter for the ExpenseList class. It is responsible for
+  interpreting the ExpenseList object and then displaying it on the list view.
+  It also has some ExpenseList modification method for cleaner list updates.
+end note
+
+note bottom of EditEntryFragment
+  This is the fragment class that will take user input. It has two modes of
+  operations. One is the ADD and the other is EDIT, which corresponds with the
+  activity in which the fragment is activated in. The main underlying function
+  of this method is to take user input and pass it into the activity that called
+  it.
+end note
+
+note bottom of BaseActivity
+  The class holds methods and functions that all other activities in this
+  project requires. This mostly include expense wrapping and unwrapping for
+  passing around to other activities. It also does some method handling for
+  waiting for activity result after starting an activity.
 end note
 
 /' This is the classes that inherit from AppCompatActivity, which is all the
