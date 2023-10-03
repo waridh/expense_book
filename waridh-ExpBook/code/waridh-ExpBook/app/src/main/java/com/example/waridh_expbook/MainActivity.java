@@ -108,8 +108,8 @@ public class MainActivity extends BaseActivity {
                         expenseAdapter.set(index,
                                 extractExpense(result.getData(),
                                         ARG_RETURNED_EXPENSE));
-                        setDefaultModeUI(); // Quick way to get the summation updated
                     }
+                    setDefaultModeUI(); // Quick way to get the summation updated
                 }
             }
         });
