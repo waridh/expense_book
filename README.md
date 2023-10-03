@@ -1,3 +1,3 @@
-# cmput_301_assignment_1
+# Expense Book
 
-The real documentation can be found in the `doc` directory.
+This is an android application mock-up.
