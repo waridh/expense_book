@@ -1,3 +1,3 @@
 # Expense Book
 
-This is an android application mock-up.
+Android application that lets users keep track of their expenses.
